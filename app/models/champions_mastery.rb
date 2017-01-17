@@ -1,0 +1,2 @@
+class ChampionsMastery < ApplicationRecord
+end

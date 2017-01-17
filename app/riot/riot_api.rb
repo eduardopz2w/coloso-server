@@ -2,6 +2,30 @@ require 'http'
 
 API_KEY = ENV['RIOT_API_KEY']
 
+def regionToPlatform(region)
+  if region == 'br'
+    return 'br1'
+  elsif region == 'eune'
+    return 'eun1'
+  elsif region == 'euw'
+    return 'euw1'
+  elsif region == 'jp'
+    return 'jp1'
+  elsif region == 'kr'
+    return 'kr'
+  elsif region == 'lan'
+    return 'la1'
+  elsif region == 'las'
+    return 'la2'
+  elsif region == 'na'
+    return 'na1'
+  elsif region == 'oce'
+    return 'oc1'
+  elsif region == 'ru'
+    return 'ru'
+  end
+end
+
 class RiotClient
   def initialize(region)
     @region = region
@@ -123,6 +147,30 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonerChampionsMastery(sumId)
+    url = "https://#{@region}.api.pvp.net/championmastery/location/#{regionToPlatform(@region)}/player/#{sumId}/topchampions"
+    response = HTTP.get(url, :params => { :api_key => API_KEY })
+
+    if response.code == 200
+      return {
+        :summonerId => sumId,
+        :region => @region,
+        :masteries => response.parse,
+      }
+
+    elsif response.code == 404
+      return {
+        :summonerId => sumId,
+        :region => @region,
+        :masteries => [],
+      }
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -223,6 +271,27 @@ class RiotCache
       Mastery.create(masteriesData)
     end
   end
+
+  def findSummonerChampionsMastery(sumId, cacheMinutes = 5)
+    masteries = ChampionsMastery.find_by(:summonerId => sumId, :region => @region)
+
+    if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
+      masteries = false
+    end
+
+    return masteries
+  end
+
+  def saveSummonerChampionsMastery(masteriesData)
+    masteries = ChampionsMastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
+
+    if masteries
+      updateData = masteries.slice(:pages)
+      masteries.update(updateData)
+    else
+      ChampionsMastery.create(masteriesData)
+    end
+  end
 end
 
 class RiotApi
@@ -276,6 +345,18 @@ class RiotApi
       else
         masteries = @client.fetchSummonerMasteries(sumId)
         @cache.saveSummonerMasteries(masteries)
+        return masteries
+      end
+  end
+
+  def getSummonerChampionsMastery(sumId)
+      masteries = @cache.findSummonerChampionsMastery(sumId)
+
+      if masteries
+        return masteries
+      else
+        masteries = @client.fetchSummonerChampionsMastery(sumId)
+        @cache.saveSummonerChampionsMastery(masteries)
         return masteries
       end
   end

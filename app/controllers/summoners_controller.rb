@@ -1,3 +1,4 @@
+# TODO: Add riot server error
 class SummonersController < ApplicationController
   def findByName
     region = params[:region]
@@ -60,6 +61,20 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('masteries_not_found') })
+    end
+  end
+
+  def championsMastery
+    region = params[:region]
+    summonerId = params[:summonerId]
+
+    riotApi = RiotApi.new(region)
+
+    begin
+      masteries = riotApi.getSummonerChampionsMastery(summonerId)
+      return render(json: masteries)
+    rescue RiotLimitReached
+      return render(json: { :message => I18n.t('riot_limit_error') })
     end
   end
 end
