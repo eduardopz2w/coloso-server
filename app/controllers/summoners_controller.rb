@@ -26,4 +26,18 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('summoner_not_found') })
     end
   end
+
+  def runes
+    region = params[:region]
+    summonerId = params[:summonerId]
+
+    riotApi = RiotApi.new(region)
+
+    begin
+      runes = riotApi.getSummonerRunes(summonerId)
+      return render(json: runes)
+    rescue EntityNotFoundError
+      return render(json: { :message => I18n.t('runes_not_found') })
+    end
+  end
 end
