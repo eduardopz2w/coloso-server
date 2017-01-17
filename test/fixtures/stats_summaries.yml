@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  summonerId: 1
+  region: MyString
+  season: MyString
+  playerStatSummaries: 
+
+two:
+  summonerId: 1
+  region: MyString
+  season: MyString
+  playerStatSummaries: 

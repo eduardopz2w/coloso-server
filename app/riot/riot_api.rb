@@ -171,6 +171,32 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonerStatsSummary(sumId, season = 'SEASON2017')
+    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.3/stats/by-summoner/#{sumId}/summary"
+    response = HTTP.get(url, :params => { :api_key => API_KEY, :season => season })
+
+    if response.code == 200
+      return {
+        :summonerId => sumId,
+        :region => @region,
+        :season => season,
+        :playerStatSummaries => response.parse['playerStatSummaries'],
+      }
+
+    elsif response.code == 404
+      return {
+        :summonerId => sumId,
+        :region => @region,
+        :season => season,
+        :playerStatSummaries => [],
+      }
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -286,10 +312,31 @@ class RiotCache
     masteries = ChampionsMastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
 
     if masteries
-      updateData = masteries.slice(:pages)
+      updateData = masteries.slice(:masteries)
       masteries.update(updateData)
     else
       ChampionsMastery.create(masteriesData)
+    end
+  end
+
+  def findSummonerStatsSummary(sumId, season, cacheMinutes = 5)
+    stats = StatsSummary.find_by(:summonerId => sumId, :region => @region, :season => season)
+
+    if stats and self.isOutDated(stats.updated_at, cacheMinutes)
+      stats = false
+    end
+
+    return stats
+  end
+
+  def saveSummonerStatsSummary(statsData)
+    stats = StatsSummary.find_by(:summonerId => statsData[:summonerId], :region => @region, :season => statsData[:season])
+
+    if stats
+      updateData = stats.slice(:playerStatSummaries)
+      stats.update(updateData)
+    else
+      StatsSummary.create(statsData)
     end
   end
 end
@@ -358,6 +405,18 @@ class RiotApi
         masteries = @client.fetchSummonerChampionsMastery(sumId)
         @cache.saveSummonerChampionsMastery(masteries)
         return masteries
+      end
+  end
+
+  def getSummonerStatsSummary(sumId, season)
+      stats = @cache.findSummonerStatsSummary(sumId, season)
+
+      if stats
+        return stats
+      else
+        stats = @client.fetchSummonerStatsSummary(sumId, season)
+        @cache.saveSummonerStatsSummary(stats)
+        return stats
       end
   end
 end

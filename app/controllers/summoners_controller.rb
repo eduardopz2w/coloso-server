@@ -77,4 +77,19 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     end
   end
+
+  def statsSummary
+    region = params[:region]
+    summonerId = params[:summonerId]
+    season = params[:season]
+
+    riotApi = RiotApi.new(region)
+
+    begin
+      stats = riotApi.getSummonerStatsSummary(summonerId, season)
+      return render(json: stats)
+    rescue RiotLimitReached
+      return render(json: { :message => I18n.t('riot_limit_error') })
+    end
+  end
 end

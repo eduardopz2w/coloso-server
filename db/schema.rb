@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170117161044) do
+ActiveRecord::Schema.define(version: 20170117163454) do
 
   create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.integer  "summonerId"
@@ -34,6 +34,15 @@ ActiveRecord::Schema.define(version: 20170117161044) do
     t.string   "region"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "stats_summaries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
+    t.integer  "summonerId"
+    t.string   "region"
+    t.string   "season"
+    t.json     "playerStatSummaries"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "summoners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
