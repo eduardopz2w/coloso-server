@@ -272,8 +272,7 @@ class RiotCache
     sumFound = Summoner.find_by(:name => sumData[:name], :region => @region)
 
     if sumFound
-      updateData = sumData.slice(:name, :summonerLevel, :profileIconId)
-      sumFound.update(updateData)
+      sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
     else
       Summoner.create(sumData)
     end
@@ -293,8 +292,7 @@ class RiotCache
     sumFound = Summoner.find_by(:summonerId => sumData[:summonerId], :region => @region)
 
     if sumFound
-      updateData = sumData.slice(:name, :summonerLevel, :profileIconId)
-      sumFound.update(updateData)
+      sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
     else
       Summoner.create(sumData)
     end
@@ -314,8 +312,7 @@ class RiotCache
     runes = Rune.find_by(:summonerId => runesData[:summonerId], :region => @region)
 
     if runes
-      updateData = runes.slice(:pages)
-      runes.update(updateData)
+      runes.update(runesData.slice(:pages))
     else
       Rune.create(runesData)
     end
@@ -335,8 +332,7 @@ class RiotCache
     masteries = Mastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
 
     if masteries
-      updateData = masteries.slice(:pages)
-      masteries.update(updateData)
+      masteries.update(masteriesData.slice(:pages))
     else
       Mastery.create(masteriesData)
     end
@@ -356,8 +352,7 @@ class RiotCache
     masteries = ChampionsMastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
 
     if masteries
-      updateData = masteries.slice(:masteries)
-      masteries.update(updateData)
+      masteries.update(masteriesData.slice(:masteries))
     else
       ChampionsMastery.create(masteriesData)
     end
@@ -377,8 +372,7 @@ class RiotCache
     stats = StatsSummary.find_by(:summonerId => statsData[:summonerId], :region => @region, :season => statsData[:season])
 
     if stats
-      updateData = stats.slice(:playerStatSummaries)
-      stats.update(updateData)
+      stats.update(statsData.slice(:playerStatSummaries))
     else
       StatsSummary.create(statsData)
     end
@@ -387,16 +381,12 @@ class RiotCache
   def findSummonersLeagueEntries(sumIds, cacheMinutes = 5)
     leagueEntries = LeagueEntry.where(:summonerId => sumIds, :region => @region)
 
-    puts "Summoner ids #{sumIds}"
-    puts "League entries length: #{leagueEntries.length}"
     if leagueEntries.length != sumIds.length
-      puts 'League entries diferent length'
       return false
     end
 
     leagueEntries.each do |leagueEntry|
       if self.isOutDated(leagueEntry.updated_at, cacheMinutes)
-        puts 'League entries outdated'
         return false
       end
     end
