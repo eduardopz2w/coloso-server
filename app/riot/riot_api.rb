@@ -101,6 +101,28 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonerMasteries(sumId)
+    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.4/summoner/#{sumId}/masteries"
+    response = HTTP.get(url, :params => { :api_key => API_KEY })
+
+    if response.code == 200
+      jsonData = response.parse.values[0]
+
+      return {
+        :summonerId => jsonData['summonerId'],
+        :pages => jsonData['pages'],
+        :region => @region,
+      }
+
+    elsif response.code == 404
+      raise EntityNotFoundError
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -180,6 +202,27 @@ class RiotCache
       Rune.create(runesData)
     end
   end
+
+  def findSummonerMasteries(sumId, cacheMinutes = 5)
+    masteries = Mastery.find_by(:summonerId => sumId, :region => @region)
+
+    if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
+      masteries = false
+    end
+
+    return masteries
+  end
+
+  def saveSummonerMasteries(masteriesData)
+    masteries = Mastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
+
+    if masteries
+      updateData = masteries.slice(:pages)
+      masteries.update(updateData)
+    else
+      Mastery.create(masteriesData)
+    end
+  end
 end
 
 class RiotApi
@@ -222,6 +265,18 @@ class RiotApi
         runes = @client.fetchSummonerRunes(sumId)
         @cache.saveSummonerRunes(runes)
         return runes
+      end
+  end
+
+  def getSummonerMasteries(sumId)
+      masteries = @cache.findSummonerMasteries(sumId)
+
+      if masteries
+        return masteries
+      else
+        masteries = @client.fetchSummonerMasteries(sumId)
+        @cache.saveSummonerMasteries(masteries)
+        return masteries
       end
   end
 end

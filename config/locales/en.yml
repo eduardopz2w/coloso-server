@@ -22,3 +22,4 @@
 en:
   summoner_not_found: 'Summoner not found'
   runes_not_found: 'Runes not found'
+  riot_limit_error: 'Riot limit error'

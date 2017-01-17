@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   get '/riot-api/:region/summoner/by-name/:summonerName', to: 'summoners#findByName'
   get '/riot-api/:region/summoner/:summonerId', to: 'summoners#findById'
   get '/riot-api/:region/summoner/:summonerId/runes', to: 'summoners#runes'
+  get '/riot-api/:region/summoner/:summonerId/masteries', to: 'summoners#masteries'
 end
