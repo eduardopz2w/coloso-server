@@ -122,4 +122,20 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('games_not_found') })
     end
   end
+
+  def gameCurrent
+    region = params[:region]
+    summonerId = params[:summonerId].to_i
+
+    riotApi = RiotApi.new(region)
+
+    begin
+      games = riotApi.getSummonerGameCurrent(summonerId)
+      return render(json: games)
+    rescue RiotLimitReached
+      return render(json: { :message => I18n.t('riot_limit_error') })
+    rescue EntityNotFoundError
+      return render(json: { :message => I18n.t('summoner_not_in_game') })
+    end
+  end
 end

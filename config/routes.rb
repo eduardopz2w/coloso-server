@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   get '/riot-api/:region/summoner/:summonerId/stats/summary', to: 'summoners#statsSummary'
   get '/riot-api/:region/summoner/:summonerId/league/entry', to: 'summoners#leagueEntry'
   get '/riot-api/:region/summoner/:summonerId/games/recent', to: 'summoners#gamesRecent'
+  get '/riot-api/:region/summoner/:summonerId/games/current', to: 'summoners#gameCurrent'
 end

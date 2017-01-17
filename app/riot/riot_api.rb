@@ -262,6 +262,27 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonerGameCurrent(sumId)
+    url = "https://#{@region}.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/#{regionToPlatform(@region)}/#{sumId}"
+    response = HTTP.get(url, :params => { :api_key => API_KEY})
+
+    if response.code == 200
+      jsonResponse = response.parse
+
+      gameData = jsonResponse.symbolize_keys
+      gameData[:focusSummonerId] = sumId
+      gameData[:regio] = @region
+
+      return gameData
+    elsif response.code == 404
+      raise EntityNotFoundError
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -539,6 +560,18 @@ class RiotApi
       end
   end
 
+  def getSummonersLeagueEntry(sumIds)
+      leagueEntries = @cache.findSummonersLeagueEntries(sumIds)
+
+      if leagueEntries
+        return leagueEntries
+      else
+        leagueEntries = @client.fetchSummonersLeagueEntries(sumIds)
+        @cache.saveSummonersLeagueEntries(leagueEntries)
+        return leagueEntries
+      end
+  end
+
   def getSummonerGamesRecent(sumId)
       games = @cache.findSummonerGamesRecent(sumId)
 
@@ -549,5 +582,22 @@ class RiotApi
         @cache.saveSummonerGamesRecent(games)
         return games
       end
+  end
+
+  def getSummonerGameCurrent(sumId)
+    game = @client.fetchSummonerGameCurrent(sumId)
+
+    sumIds = []
+    game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
+
+    leagueEntries = self.getSummonersLeagueEntry(sumIds)
+
+    game[:participants].each do |participant|
+      sumId = participant['summonerId']
+
+      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry[:summonerId] == sumId }
+    end
+
+    return game
   end
 end
