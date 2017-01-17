@@ -241,6 +241,27 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonerGamesRecent(sumId)
+    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.3/game/by-summoner/#{sumId}/recent"
+    response = HTTP.get(url, :params => { :api_key => API_KEY})
+
+    if response.code == 200
+      jsonResponse = response.parse
+
+      return {
+        :summonerId => jsonResponse['summonerId'],
+        :region => @region,
+        :games => jsonResponse['games'],
+      }
+    elsif response.code == 404
+      raise EntityNotFoundError
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -405,6 +426,26 @@ class RiotCache
       end
     end
   end
+
+  def findSummonerGamesRecent(sumId, cacheMinutes = 5)
+    games = GamesRecent.find_by(:summonerId => sumId, :region => @region)
+
+    if games and self.isOutDated(games.updated_at, cacheMinutes)
+      games = false
+    end
+
+    return games
+  end
+
+  def saveSummonerGamesRecent(gamesData)
+    games = GamesRecent.find_by(:summonerId => gamesData[:summonerId], :region => @region)
+
+    if games
+      games.update(gamesData.slice(:games))
+    else
+      GamesRecent.create(gamesData)
+    end
+  end
 end
 
 class RiotApi
@@ -495,6 +536,18 @@ class RiotApi
         leagueEntries = @client.fetchSummonersLeagueEntries([sumId])
         @cache.saveSummonersLeagueEntries(leagueEntries)
         return leagueEntries[0]
+      end
+  end
+
+  def getSummonerGamesRecent(sumId)
+      games = @cache.findSummonerGamesRecent(sumId)
+
+      if games
+        return games
+      else
+        games = @client.fetchSummonerGamesRecent(sumId)
+        @cache.saveSummonerGamesRecent(games)
+        return games
       end
   end
 end

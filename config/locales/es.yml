@@ -1,4 +1,5 @@
 es:
   summoner_not_found: 'Invocador no encontrado'
   runes_not_found: 'Paginas de runas no encontradas'
+  games_not_found: 'Juegos no encontrados'
   riot_limit_error: 'Error al conectar con los servidores de Riot, intenta de nuevo en unos segundos'

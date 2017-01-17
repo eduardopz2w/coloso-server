@@ -1,0 +1,2 @@
+class GamesRecent < ApplicationRecord
+end
