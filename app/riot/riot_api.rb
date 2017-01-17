@@ -197,6 +197,50 @@ class RiotClient
       raise RiotServerError
     end
   end
+
+  def fetchSummonersLeagueEntries(sumIds)
+    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
+    response = HTTP.get(url, :params => { :api_key => API_KEY})
+
+    if response.code == 200
+      jsonResponse = response.parse
+      leagueEntries = []
+
+      sumIds.each do |sumId|
+        if jsonResponse.has_key?(sumId.to_s)
+          leagueEntries.push(
+            :summonerId => sumId,
+            :region => @region,
+            :entries => jsonResponse[sumId.to_s],
+          )
+        else
+          leagueEntries.push(
+            :summonerId => sumId,
+            :region => @region,
+            :entries => [],
+          )
+        end
+      end
+
+      return leagueEntries
+    elsif response.code == 404
+      leagueEntries = []
+
+      sumIds.each do |sumId|
+        leagueEntries.push({
+            :summonerId => sumId,
+            :region => @region,
+            :entries => [],
+        })
+      end
+
+      return leagueEntries
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
 end
 
 class RiotCache
@@ -339,6 +383,38 @@ class RiotCache
       StatsSummary.create(statsData)
     end
   end
+
+  def findSummonersLeagueEntries(sumIds, cacheMinutes = 5)
+    leagueEntries = LeagueEntry.where(:summonerId => sumIds, :region => @region)
+
+    puts "Summoner ids #{sumIds}"
+    puts "League entries length: #{leagueEntries.length}"
+    if leagueEntries.length != sumIds.length
+      puts 'League entries diferent length'
+      return false
+    end
+
+    leagueEntries.each do |leagueEntry|
+      if self.isOutDated(leagueEntry.updated_at, cacheMinutes)
+        puts 'League entries outdated'
+        return false
+      end
+    end
+
+    return leagueEntries
+  end
+
+  def saveSummonersLeagueEntries(leagueEntries)
+    leagueEntries.each do |leagueEntry|
+      leagueEntryFound = LeagueEntry.find_by(:summonerId => leagueEntry[:summonerId], :region => @region)
+
+      if leagueEntryFound
+        leagueEntryFound.update(leagueEntry.slice(:entries))
+      else
+        LeagueEntry.create(leagueEntry)
+      end
+    end
+  end
 end
 
 class RiotApi
@@ -417,6 +493,18 @@ class RiotApi
         stats = @client.fetchSummonerStatsSummary(sumId, season)
         @cache.saveSummonerStatsSummary(stats)
         return stats
+      end
+  end
+
+  def getSummonerLeagueEntry(sumId)
+      leagueEntries = @cache.findSummonersLeagueEntries([sumId])
+
+      if leagueEntries
+        return leagueEntries[0]
+      else
+        leagueEntries = @client.fetchSummonersLeagueEntries([sumId])
+        @cache.saveSummonersLeagueEntries(leagueEntries)
+        return leagueEntries[0]
       end
   end
 end

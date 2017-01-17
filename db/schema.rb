@@ -10,12 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170117163454) do
+ActiveRecord::Schema.define(version: 20170117172031) do
 
   create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.integer  "summonerId"
     t.string   "region"
     t.json     "masteries"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "league_entries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
+    t.integer  "summonerId"
+    t.string   "region"
+    t.json     "entries"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

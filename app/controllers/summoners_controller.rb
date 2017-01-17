@@ -92,4 +92,18 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     end
   end
+
+  def leagueEntry
+    region = params[:region]
+    summonerId = params[:summonerId].to_i
+
+    riotApi = RiotApi.new(region)
+
+    begin
+      leagueEntry = riotApi.getSummonerLeagueEntry(summonerId)
+      return render(json: leagueEntry)
+    rescue RiotLimitReached
+      return render(json: { :message => I18n.t('riot_limit_error') })
+    end
+  end
 end
