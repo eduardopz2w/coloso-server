@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  matchId: 1
+  matchCreation: 1
+  region: MyString
+  spell1Id: 1
+  spell2Id: 1
+  championId: 1
+  highestAchievedSeasonTier: MyString
+  masteries: 
+  runes: 
+  stats: 
+  itemsOrder: 
+  skillsOrder: 
+
+two:
+  matchId: 1
+  matchCreation: 1
+  region: MyString
+  spell1Id: 1
+  spell2Id: 1
+  championId: 1
+  highestAchievedSeasonTier: MyString
+  masteries: 
+  runes: 
+  stats: 
+  itemsOrder: 
+  skillsOrder: 

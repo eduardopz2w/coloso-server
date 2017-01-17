@@ -9,4 +9,6 @@ Rails.application.routes.draw do
   get '/riot-api/:region/summoner/:summonerId/league/entry', to: 'summoners#leagueEntry'
   get '/riot-api/:region/summoner/:summonerId/games/recent', to: 'summoners#gamesRecent'
   get '/riot-api/:region/summoner/:summonerId/games/current', to: 'summoners#gameCurrent'
+  get '/pro-builds', to: 'pro_builds#index'
+  resources :pro_players, path: 'pro-players'
 end
