@@ -24,4 +24,5 @@ en:
   runes_not_found: 'Runes not found'
   games_not_found: 'Games not found'
   riot_limit_error: 'Riot limit error'
+  riot_server_error: 'Error al conectar con los servidores de Riot, por favor intente mas tarde'
   summoner_not_in_game: 'El invocador no esta en juego'

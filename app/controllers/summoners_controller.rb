@@ -13,6 +13,8 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_found') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -29,6 +31,8 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_found') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -37,14 +41,24 @@ class SummonersController < ApplicationController
     summonerId = params[:summonerId]
 
     riotApi = RiotApi.new(region)
+    riotStatic = RiotStatic.new('en')
 
     begin
       runes = riotApi.getSummonerRunes(summonerId)
+
+      runes['pages'] = runes['pages'].map do |page|
+        page['runes'] = page['runes'].map do |rune|
+          rune.merge(riotStatic.rune(rune['runeId']).slice('name', 'description', 'image'))
+        end
+        page
+      end
       return render(json: runes)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('runes_not_found') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -61,6 +75,8 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('masteries_not_found') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -69,10 +85,16 @@ class SummonersController < ApplicationController
     summonerId = params[:summonerId]
 
     riotApi = RiotApi.new(region)
+    riotStatic = RiotStatic.new('en')
 
     begin
-      masteries = riotApi.getSummonerChampionsMastery(summonerId)
-      return render(json: masteries)
+      masteriesData = riotApi.getSummonerChampionsMastery(summonerId)
+
+      masteriesData['masteries'].map do |mastery|
+        mastery['championData'] = riotStatic.champion(mastery['championId']).slice('name', 'title')
+        mastery
+      end
+      return render(json: masteriesData)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     end
@@ -90,6 +112,8 @@ class SummonersController < ApplicationController
       return render(json: stats)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -104,6 +128,8 @@ class SummonersController < ApplicationController
       return render(json: leagueEntry)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -120,6 +146,8 @@ class SummonersController < ApplicationController
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('games_not_found') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 
@@ -128,14 +156,24 @@ class SummonersController < ApplicationController
     summonerId = params[:summonerId].to_i
 
     riotApi = RiotApi.new(region)
+    riotStatic = RiotStatic.new('en')
 
     begin
       games = riotApi.getSummonerGameCurrent(summonerId)
+
+      games['participants'] = games['participants'].map { |participant|
+        participant['runes'] = participant['runes'].map { |rune|
+          rune.merge(riotStatic.rune(rune['runeId']).slice('name', 'description', 'image'))
+        }
+        participant
+      }
       return render(json: games)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_in_game') })
+    rescue RiotServerError
+      return render(json: { :message => I18n.t('riot_server_error') })
     end
   end
 end

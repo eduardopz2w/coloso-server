@@ -89,33 +89,32 @@ class RiotClient
 
       jsonData['pages'].each do |page|
         groupRunes = []
+        if page['slots'].nil?
+          page['slots'] = []
+        end
 
         page['slots'].each do |slot|
-          runeIndexInGrouped = groupRunes.index{|groupRune| groupRune[:runeId] == slot['runeId']}
+          runeIndexInGrouped = groupRunes.index{|groupRune| groupRune['runeId'] == slot['runeId']}
 
           if runeIndexInGrouped != nil
-            groupRunes[runeIndexInGrouped][:count] += 1
+            groupRunes[runeIndexInGrouped]['count'] += 1
           else
             groupRunes.push({
-                :runeId => slot['runeId'],
-                :count => 1
+                'runeId' => slot['runeId'],
+                'count' => 1
             })
           end
 
           groupPages.push({
-              :id => page['id'],
-              :name => page['name'],
-              :current => page['current'],
-              :runes => groupRunes,
+              'id' => page['id'],
+              'name' => page['name'],
+              'current' => page['current'],
+              'runes' => groupRunes,
           })
         end
       end
 
-      return {
-        :summonerId => jsonData['summonerId'],
-        :pages => groupPages,
-        :region => @region,
-      }
+      return { 'summonerId' => jsonData['summonerId'], 'pages' => groupPages, 'region' => @region }
 
     elsif response.code == 404
       raise EntityNotFoundError
@@ -150,20 +149,20 @@ class RiotClient
 
   def fetchSummonerChampionsMastery(sumId)
     url = "https://#{@region}.api.pvp.net/championmastery/location/#{regionToPlatform(@region)}/player/#{sumId}/topchampions"
-    response = HTTP.get(url, :params => { :api_key => API_KEY })
+    response = HTTP.get(url, :params => { :api_key => API_KEY, :count => 200 })
 
     if response.code == 200
       return {
-        :summonerId => sumId,
-        :region => @region,
-        :masteries => response.parse,
+        'summonerId' => sumId,
+        'region' => @region,
+        'masteries' => response.parse,
       }
 
     elsif response.code == 404
       return {
-        :summonerId => sumId,
-        :region => @region,
-        :masteries => [],
+        'summonerId' => sumId,
+        'region' => @region,
+        'masteries' => [],
       }
     elsif response.code == 429
       raise RiotLimitReached
@@ -270,9 +269,9 @@ class RiotClient
     if response.code == 200
       jsonResponse = response.parse
 
-      gameData = jsonResponse.symbolize_keys
-      gameData[:focusSummonerId] = sumId
-      gameData[:regio] = @region
+      gameData = jsonResponse
+      gameData['focusSummonerId'] = sumId
+      gameData['regio'] = @region
 
       return gameData
     elsif response.code == 404
@@ -344,23 +343,23 @@ class RiotCache
     runes = Rune.find_by(:summonerId => sumId, :region => @region)
 
     if runes and self.isOutDated(runes.updated_at, cacheMinutes)
-      runes = false
+      return false
     end
 
     return runes
   end
 
   def saveSummonerRunes(runesData)
-    runes = Rune.find_by(:summonerId => runesData[:summonerId], :region => @region)
+    runes = Rune.find_by(:summonerId => runesData['summonerId'], 'region' => @region)
 
     if runes
-      runes.update(runesData.slice(:pages))
+      runes.update(runesData.slice('pages'))
     else
       Rune.create(runesData)
     end
   end
 
-  def findSummonerMasteries(sumId, cacheMinutes = 5)
+  def findSummonerMasteries(sumId, cacheMinutes = 0)
     masteries = Mastery.find_by(:summonerId => sumId, :region => @region)
 
     if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
@@ -384,7 +383,7 @@ class RiotCache
     masteries = ChampionsMastery.find_by(:summonerId => sumId, :region => @region)
 
     if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
-      masteries = false
+      return false
     end
 
     return masteries
@@ -588,14 +587,14 @@ class RiotApi
     game = @client.fetchSummonerGameCurrent(sumId)
 
     sumIds = []
-    game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
+    game['participants'].each { |participant| sumIds.push(participant['summonerId'])}
 
     leagueEntries = self.getSummonersLeagueEntry(sumIds)
 
-    game[:participants].each do |participant|
+    game['participants'].each do |participant|
       sumId = participant['summonerId']
 
-      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry[:summonerId] == sumId }
+      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
     end
 
     return game
