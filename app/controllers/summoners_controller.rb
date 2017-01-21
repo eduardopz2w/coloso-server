@@ -39,20 +39,11 @@ class SummonersController < ApplicationController
   def runes
     region = params[:region]
     summonerId = params[:summonerId]
-
     riotApi = RiotApi.new(region)
-    riotStatic = RiotStatic.new('en')
 
     begin
       runes = riotApi.getSummonerRunes(summonerId)
-
-      runes['pages'] = runes['pages'].map do |page|
-        page['runes'] = page['runes'].map do |rune|
-          rune.merge(riotStatic.rune(rune['runeId']).slice('name', 'description', 'image'))
-        end
-        page
-      end
-      return render(json: runes)
+      return render(json: runes, locale: 'en')
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     rescue EntityNotFoundError
@@ -85,16 +76,10 @@ class SummonersController < ApplicationController
     summonerId = params[:summonerId]
 
     riotApi = RiotApi.new(region)
-    riotStatic = RiotStatic.new('en')
 
     begin
-      masteriesData = riotApi.getSummonerChampionsMastery(summonerId)
-
-      masteriesData['masteries'].map do |mastery|
-        mastery['championData'] = riotStatic.champion(mastery['championId']).slice('name', 'title')
-        mastery
-      end
-      return render(json: masteriesData)
+      masteries = riotApi.getSummonerChampionsMastery(summonerId)
+      return render(json: masteries)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     end
@@ -156,14 +141,13 @@ class SummonersController < ApplicationController
     summonerId = params[:summonerId].to_i
 
     riotApi = RiotApi.new(region)
-    riotStatic = RiotStatic.new('en')
 
     begin
       games = riotApi.getSummonerGameCurrent(summonerId)
 
       games['participants'] = games['participants'].map { |participant|
         participant['runes'] = participant['runes'].map { |rune|
-          rune.merge(riotStatic.rune(rune['runeId']).slice('name', 'description', 'image'))
+          rune.merge(RiotStatic.rune(rune['runeId'], 'en').slice('name', 'description', 'image'))
         }
         participant
       }

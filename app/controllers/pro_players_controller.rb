@@ -1,10 +1,8 @@
 class ProPlayersController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   def index
     proPlayers = ProPlayer.includes(:pro_summoner).all
 
-    return render(:json => { :proPlayers => proPlayers})
+    return render json: proPlayers
   end
 
   def create

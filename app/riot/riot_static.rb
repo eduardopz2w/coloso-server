@@ -1,30 +1,25 @@
-class RiotStatic
-  private
-    def initialize(locale)
-      @locale = locale
-      loadLocaleFiles()
-    end
 
-    def loadLocaleFiles()
-      @runeStaticJson = JSON.parse(File.read("app/assets/riot_static/#{@locale}/rune.json"))
-      @championStaticJson = JSON.parse(File.read("app/assets/riot_static/#{@locale}/champion.json"))
-    end
+module RiotStatic
+  @staticJsons = {
+    'en' => {
+      'rune' => JSON.parse(File.read("app/assets/riot_static/en/rune.json")),
+      'champion' => JSON.parse(File.read("app/assets/riot_static/en/champion.json"))
+    }
+  }
 
-  public
-    def rune(runeId)
-      return @runeStaticJson['data'][runeId.to_s]
-    end
+  def RiotStatic.rune(runeId, locale)
+    return @staticJsons[locale]['rune']['data'][runeId.to_s]
+  end
 
-    def champion(championId)
-      staticData = {}
+  def RiotStatic.champion(championId, locale)
+    staticData = {}
 
-      @championStaticJson['data'].each do |champName, champData|
-        if champData['key'] == championId.to_s
-          staticData = champData
-        end
+    @staticJsons[locale]['champion'].each do |champName, champData|
+      if champData['key'] == championId.to_s
+        staticData = champData
       end
-
-      return staticData
     end
 
+    return staticData
+  end
 end

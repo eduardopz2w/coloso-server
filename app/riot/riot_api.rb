@@ -314,8 +314,11 @@ class RiotCache
 
     if sumFound
       sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
+      sumFound.touch()
+
+      return sumFound
     else
-      Summoner.create(sumData)
+      return Summoner.create(sumData)
     end
   end
 
@@ -334,8 +337,11 @@ class RiotCache
 
     if sumFound
       sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
+      sumFound.touch()
+
+      return sumFound
     else
-      Summoner.create(sumData)
+      return Summoner.create(sumData)
     end
   end
 
@@ -354,8 +360,10 @@ class RiotCache
 
     if runes
       runes.update(runesData.slice('pages'))
+      runes.touch()
+      return runes
     else
-      Rune.create(runesData)
+      return Rune.create(runesData)
     end
   end
 
@@ -374,8 +382,10 @@ class RiotCache
 
     if masteries
       masteries.update(masteriesData.slice(:pages))
+      masteries.touch()
+      return masteries
     else
-      Mastery.create(masteriesData)
+      return Mastery.create(masteriesData)
     end
   end
 
@@ -394,8 +404,10 @@ class RiotCache
 
     if masteries
       masteries.update(masteriesData.slice(:masteries))
+      masteries.touch
+      return masteries
     else
-      ChampionsMastery.create(masteriesData)
+      return ChampionsMastery.create(masteriesData)
     end
   end
 
@@ -414,8 +426,10 @@ class RiotCache
 
     if stats
       stats.update(statsData.slice(:playerStatSummaries))
+      stats.touch
+      return stats
     else
-      StatsSummary.create(statsData)
+      return StatsSummary.create(statsData)
     end
   end
 
@@ -436,15 +450,21 @@ class RiotCache
   end
 
   def saveSummonersLeagueEntries(leagueEntries)
+    entries = []
+
     leagueEntries.each do |leagueEntry|
       leagueEntryFound = LeagueEntry.find_by(:summonerId => leagueEntry[:summonerId], :region => @region)
 
       if leagueEntryFound
         leagueEntryFound.update(leagueEntry.slice(:entries))
+        leagueEntryFound.touch
+        entries.push(leagueEntryFound)
       else
-        LeagueEntry.create(leagueEntry)
+        entries.push(LeagueEntry.create(leagueEntry))
       end
     end
+
+    return entries
   end
 
   def findSummonerGamesRecent(sumId, cacheMinutes = 5)
@@ -462,8 +482,10 @@ class RiotCache
 
     if games
       games.update(gamesData.slice(:games))
+      games.touch()
+      return games
     else
-      GamesRecent.create(gamesData)
+      return GamesRecent.create(gamesData)
     end
   end
 end
@@ -481,8 +503,8 @@ class RiotApi
       if summoner
         return summoner
       else
-        summoner = @client.fetchSummonerByName(sumName)
-        @cache.saveSummonerByName(summoner)
+        sumData = @client.fetchSummonerByName(sumName)
+        summoner = @cache.saveSummonerByName(sumData)
         return summoner
       end
   end
@@ -493,8 +515,8 @@ class RiotApi
       if summoner
         return summoner
       else
-        summoner = @client.fetchSummonerById(sumId)
-        @cache.saveSummonerById(summoner)
+        sumData = @client.fetchSummonerById(sumId)
+        summoner = @cache.saveSummonerById(sumData)
         return summoner
       end
   end
@@ -505,8 +527,8 @@ class RiotApi
       if runes
         return runes
       else
-        runes = @client.fetchSummonerRunes(sumId)
-        @cache.saveSummonerRunes(runes)
+        runesData = @client.fetchSummonerRunes(sumId)
+        runes = @cache.saveSummonerRunes(runesData)
         return runes
       end
   end
@@ -517,8 +539,8 @@ class RiotApi
       if masteries
         return masteries
       else
-        masteries = @client.fetchSummonerMasteries(sumId)
-        @cache.saveSummonerMasteries(masteries)
+        masteriesData = @client.fetchSummonerMasteries(sumId)
+        masteries = @cache.saveSummonerMasteries(masteriesData)
         return masteries
       end
   end
@@ -529,8 +551,8 @@ class RiotApi
       if masteries
         return masteries
       else
-        masteries = @client.fetchSummonerChampionsMastery(sumId)
-        @cache.saveSummonerChampionsMastery(masteries)
+        masteriesData = @client.fetchSummonerChampionsMastery(sumId)
+        masteries = @cache.saveSummonerChampionsMastery(masteriesData)
         return masteries
       end
   end
@@ -541,8 +563,8 @@ class RiotApi
       if stats
         return stats
       else
-        stats = @client.fetchSummonerStatsSummary(sumId, season)
-        @cache.saveSummonerStatsSummary(stats)
+        statsData = @client.fetchSummonerStatsSummary(sumId, season)
+        stats = @cache.saveSummonerStatsSummary(statsData)
         return stats
       end
   end
@@ -553,8 +575,8 @@ class RiotApi
       if leagueEntries
         return leagueEntries[0]
       else
-        leagueEntries = @client.fetchSummonersLeagueEntries([sumId])
-        @cache.saveSummonersLeagueEntries(leagueEntries)
+        leagueEntriesData = @client.fetchSummonersLeagueEntries([sumId])
+        leagueEntries = @cache.saveSummonersLeagueEntries(leagueEntriesData)
         return leagueEntries[0]
       end
   end
@@ -565,8 +587,8 @@ class RiotApi
       if leagueEntries
         return leagueEntries
       else
-        leagueEntries = @client.fetchSummonersLeagueEntries(sumIds)
-        @cache.saveSummonersLeagueEntries(leagueEntries)
+        leagueEntriesData = @client.fetchSummonersLeagueEntries(sumIds)
+        leagueEntries = @cache.saveSummonersLeagueEntries(leagueEntriesData)
         return leagueEntries
       end
   end
@@ -577,8 +599,8 @@ class RiotApi
       if games
         return games
       else
-        games = @client.fetchSummonerGamesRecent(sumId)
-        @cache.saveSummonerGamesRecent(games)
+        gamesData = @client.fetchSummonerGamesRecent(sumId)
+        games = @cache.saveSummonerGamesRecent(gamesData)
         return games
       end
   end
