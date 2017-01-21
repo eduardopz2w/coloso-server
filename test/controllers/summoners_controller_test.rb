@@ -125,4 +125,21 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
     assert_instance_of(Array, res['masteries'])
     assert_equal(0, res['masteries'].length)
   end
+
+  test '#gamesRecent should response OK' do
+    get '/riot-api/lan/summoner/75119/games/recent'
+    assert_response(:success)
+    res = JSON.parse(@response.body)['gamesRecent']
+    assert_instance_of(Hash, res)
+    assert_instance_of(Array, res['games'])
+  end
+
+  test '#gamesRecent of notFound summoner should response empty games' do
+    get '/riot-api/lan/summoner/0/games/recent'
+    assert_response(:success)
+    res = JSON.parse(@response.body)['gamesRecent']
+    assert_instance_of(Hash, res)
+    assert_instance_of(Array, res['games'])
+    assert_equal(0, res['games'].length)
+  end
 end

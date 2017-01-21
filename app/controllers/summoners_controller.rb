@@ -129,8 +129,6 @@ class SummonersController < ApplicationController
       return render(json: games)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
-    rescue EntityNotFoundError
-      return render(json: { :message => I18n.t('games_not_found') }, status: :not_found)
     rescue RiotServerError
       return render(json: { :message => I18n.t('riot_server_error') })
     end

@@ -249,12 +249,16 @@ class RiotClient
       jsonResponse = response.parse
 
       return {
-        :summonerId => jsonResponse['summonerId'],
+        :summonerId => sumId,
         :region => @region,
         :games => jsonResponse['games'],
       }
     elsif response.code == 404
-      raise EntityNotFoundError
+      return {
+        :summonerId => sumId,
+        :region => @region,
+        :games => [],
+      }
     elsif response.code == 429
       raise RiotLimitReached
     else
