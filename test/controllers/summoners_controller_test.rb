@@ -35,17 +35,7 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
   test '#masteries should response OK' do
     get '/riot-api/lan/summoner/75119/masteries'
     assert_response(:success)
-    res = JSON.parse(@response.body)['masteries']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['pages'])
-    res['pages'].each { |page|
-      assert_instance_of(String, page['name'])
-      assert_instance_of(Array, page['masteries'])
-      page['masteries'].each { |mastery|
-        assert_instance_of(Integer, mastery['id'])
-        assert(mastery['rank'].between?(1, 5))
-      }
-    }
+    JSON::Validator.validate!(JSON_SCHEMAS::Masteries, getJsonResponse())
   end
 
   test '#masteries should response NOT_FOUND' do

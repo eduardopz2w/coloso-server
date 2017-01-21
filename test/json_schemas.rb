@@ -89,4 +89,52 @@ module JSON_SCHEMAS
     },
     'required' => ['runes'],
   }
+
+  Masteries = {
+    'type' => 'object',
+    'properties' => {
+      'masteries' => {
+        'type' => 'object',
+        'properties' => {
+          'pages' => {
+            'type' => 'array',
+            'items' => {
+              'type' => 'object',
+              'properties' => {
+                'id' => {
+                  'type' => 'integer',
+                },
+                'name' => {
+                  'type' => 'string',
+                },
+                'current' => {
+                  'type' => 'boolean',
+                },
+                'masteries' => {
+                  'type' => 'array',
+                  'items' => {
+                    'type' => 'object',
+                    'properties' => {
+                      'id' => {
+                        'type' => 'integer',
+                      },
+                      'rank' => {
+                        'type' => 'integer',
+                        'minimum' => 1,
+                        'maximum' => 5,
+                      },
+                    },
+                    'required' => ['id', 'rank'],
+                  },
+                },
+              },
+              'required' => ['id', 'name', 'current', 'masteries'],
+            },
+          },
+        },
+        'required' => ['pages'],
+      }
+    },
+    'required' => ['masteries']
+  }
 end
