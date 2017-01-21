@@ -1,4 +1,6 @@
 require 'test_helper'
+require 'json-schema'
+require 'json_schemas'
 
 class SummonersControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
@@ -17,7 +19,7 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
   test '#findByName should response the summonerData' do
     get '/riot-api/lan/summoner/by-name/armaghyon'
     assert_response(:success)
-    testSummonerData(@response)
+    JSON::Validator.validate!(JSON_SCHEMAS::Summoner, getJsonResponse())
   end
 
   test '#findByName should response not_found' do
@@ -26,8 +28,7 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
 
   test '#findById should response the summonerData' do
     get '/riot-api/lan/summoner/75453'
-    assert_response(:success)
-    testSummonerData(@response)
+    JSON::Validator.validate!(JSON_SCHEMAS::Summoner, getJsonResponse())
   end
 
   test '#findById should response not_found' do

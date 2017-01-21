@@ -16,6 +16,10 @@ module TestNotFoundResponse
     res = JSON.parse(@response.body)
     assert_instance_of(String, res['message'])
   end
+
+  def getJsonResponse
+    return JSON.parse(@response.body)
+  end
 end
 
 class ActionDispatch::IntegrationTest
