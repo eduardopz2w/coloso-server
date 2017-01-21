@@ -205,4 +205,203 @@ module JSON_SCHEMAS
     },
     'required' => ['championsMastery'],
   }
+
+  GamesRecent = {
+    'type' => 'object',
+    'properties' => {
+      'gamesRecent' => {
+        'type' => 'object',
+        'properties' => {
+          'games' => {
+            'type' => 'array',
+            'items' => {
+              'type' => 'object',
+              'properties' => {
+                'gameId' => {
+                  'type' => 'integer',
+                },
+                'invalid' => {
+                  'type' => 'boolean',
+                },
+                'gameMode' => {
+                  'type' => 'string',
+                },
+                'gameType' => {
+                  'type' => 'string',
+                },
+                'subType' => {
+                  'type' => 'string',
+                },
+                'mapId' => {
+                  'type' => 'integer',
+                },
+                'teamId' => {
+                  'type' => 'integer',
+                },
+                'championId' => {
+                  'type' => 'integer',
+                },
+                'spell1' => {
+                  'type' => 'integer',
+                },
+                'spell2' => {
+                  'type' => 'integer',
+                },
+                'level' => {
+                  'type' => 'integer',
+                },
+                'ipEarned' => {
+                  'type' => 'integer',
+                },
+                'createDate' => {
+                  'type' => 'integer',
+                },
+                'fellowPlayers' => {
+                  'type' => 'array',
+                  'items' => {
+                    'type' => 'object',
+                    'properties' => {
+                      'summonerId' => {
+                        'type' => 'integer',
+                      },
+                      'teamId' => {
+                        'type' => 'integer',
+                      },
+                      'championId' => {
+                        'type' => 'integer',
+                      },
+                    }
+                  }
+                },
+                'stats' => {
+                'type' => 'object',
+                'properties' => {
+                  'level' => {
+                    'type' => 'integer',
+                  },
+                  'goldEarned' => {
+                    'type' => 'integer',
+                  },
+                  'numDeaths' => {
+                    'type' => 'integer',
+                  },
+                  'minionsKilled' => {
+                    'type' => 'integer',
+                  },
+                  'championsKilled' => {
+                    'type' => 'integer',
+                  },
+                  'goldSpent' => {
+                    'type' => 'integer',
+                  },
+                  'totalDamageDealt' => {
+                    'type' => 'integer',
+                  },
+                  'totalDamageTaken' => {
+                    'type' => 'integer',
+                  },
+                  'killingSprees' => {
+                    'type' => 'integer',
+                  },
+                  'largestKillingSpree' => {
+                    'type' => 'integer',
+                  },
+                  'win' => {
+                    'type' => 'boolean',
+                  },
+                  'neutralMinionsKilled' => {
+                    'type' => 'integer',
+                  },
+                  'largestMultiKill' => {
+                    'type' => 'integer',
+                  },
+                  'physicalDamageDealtPlayer' => {
+                    'type' => 'integer',
+                  },
+                  'magicDamageDealtPlayer' => {
+                    'type' => 'integer',
+                  },
+                  'physicalDamageTaken' => {
+                    'type' => 'integer',
+                  },
+                  'magicDamageTaken' => {
+                    'type' => 'integer',
+                  },
+                  'timePlayed' => {
+                    'type' => 'integer',
+                  },
+                  'totalHeal' => {
+                    'type' => 'integer',
+                  },
+                  'totalUnitsHealed' => {
+                    'type' => 'integer',
+                  },
+                  'assists' => {
+                    'type' => 'integer',
+                  },
+                  'item0' => {
+                    'type' => 'integer',
+                  },
+                  'item1' => {
+                    'type' => 'integer',
+                  },
+                  'item2' => {
+                    'type' => 'integer',
+                  },
+                  'item3' => {
+                    'type' => 'integer',
+                  },
+                  'item4' => {
+                    'type' => 'integer',
+                  },
+                  'item5' => {
+                    'type' => 'integer',
+                  },
+                  'item6' => {
+                    'type' => 'integer',
+                  },
+                  'magicDamageDealtToChampions' => {
+                    'type' => 'integer',
+                  },
+                  'physicalDamageDealtToChampions' => {
+                    'type' => 'integer',
+                  },
+                  'totalDamageDealtToChampions' => {
+                    'type' => 'integer',
+                  },
+                  'trueDamageDealtPlayer' => {
+                    'type' => 'integer',
+                  },
+                  'trueDamageDealtToChampions' => {
+                    'type' => 'integer',
+                  },
+                  'wardPlaced' => {
+                    'type' => 'integer',
+                  },
+                  'neutralMinionsKilledEnemyJungle' => {
+                    'type' => 'integer',
+                  },
+                  'neutralMinionsKilledYourJungle' => {
+                    'type' => 'integer',
+                  },
+                  'totalTimeCrowdControlDealt' => {
+                    'type' => 'integer',
+                  },
+                  'sightWardsBought' => {
+                    'type' => 'integer',
+                  },
+                  'visionWardsBought' => {
+                    'type' => 'integer',
+                  },
+                },
+              },
+              }
+            },
+          }
+        },
+        'required' => ['games'],
+      }
+    },
+    'required' => ['gamesRecent'],
+  }
 end

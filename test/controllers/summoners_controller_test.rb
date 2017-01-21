@@ -63,26 +63,18 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
   test '#championsMastery of notFound summoner should response empty masteries' do
     get '/riot-api/lan/summoner/0/champions-mastery'
     assert_response(:success)
-    res = JSON.parse(@response.body)['championsMastery']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['masteries'])
-    assert_equal(0, res['masteries'].length)
+    JSON::Validator.validate!(JSON_SCHEMAS::ChampionsMastery, getJsonResponse())
   end
 
   test '#gamesRecent should response OK' do
     get '/riot-api/lan/summoner/75119/games/recent'
     assert_response(:success)
-    res = JSON.parse(@response.body)['gamesRecent']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['games'])
+    JSON::Validator.validate!(JSON_SCHEMAS::GamesRecent, getJsonResponse())
   end
 
   test '#gamesRecent of notFound summoner should response empty games' do
     get '/riot-api/lan/summoner/0/games/recent'
     assert_response(:success)
-    res = JSON.parse(@response.body)['gamesRecent']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['games'])
-    assert_equal(0, res['games'].length)
+    JSON::Validator.validate!(JSON_SCHEMAS::GamesRecent, getJsonResponse())
   end
 end
