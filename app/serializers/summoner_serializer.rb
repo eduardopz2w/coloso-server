@@ -1,3 +1,3 @@
 class SummonerSerializer < ActiveModel::Serializer
-  attributes :summonerId, :profileIconId, :summonerLevel, :region
+  attributes :summonerId, :name, :profileIconId, :summonerLevel, :region
 end

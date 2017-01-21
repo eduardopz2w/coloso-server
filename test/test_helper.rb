@@ -8,3 +8,16 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
+
+module TestNotFoundResponse
+  def testNotFoundResponse(url)
+    get(url)
+    assert_response(:not_found)
+    res = JSON.parse(@response.body)
+    assert_instance_of(String, res['message'])
+  end
+end
+
+class ActionDispatch::IntegrationTest
+  include TestNotFoundResponse
+end
