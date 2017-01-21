@@ -100,4 +100,29 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
     assert_equal(0, res['playerStatSummaries'].length)
     assert_equal('SEASON2016', res['season'])
   end
+
+  test '#championsMastery should response OK' do
+    get '/riot-api/lan/summoner/75119/champions-mastery'
+    assert_response(:success)
+    res = JSON.parse(@response.body)['championsMastery']
+    assert_instance_of(Hash, res)
+    assert_instance_of(Array, res['masteries'])
+    res['masteries'].each { |mastery|
+      assert_instance_of(Integer, mastery['championId'])
+      assert_instance_of(Integer, mastery['championLevel'])
+      assert_instance_of(Integer, mastery['championPoints'])
+      assert_instance_of(Hash, mastery['championData'])
+      assert_instance_of(String, mastery['championData']['name'])
+      assert_instance_of(String, mastery['championData']['title'])
+    }
+  end
+
+  test '#championsMastery of notFound summoner should response empty masteries' do
+    get '/riot-api/lan/summoner/0/champions-mastery'
+    assert_response(:success)
+    res = JSON.parse(@response.body)['championsMastery']
+    assert_instance_of(Hash, res)
+    assert_instance_of(Array, res['masteries'])
+    assert_equal(0, res['masteries'].length)
+  end
 end

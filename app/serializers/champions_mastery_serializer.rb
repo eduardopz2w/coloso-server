@@ -1,6 +1,4 @@
 class ChampionsMasterySerializer < ActiveModel::Serializer
-  type 'championsMasteries'
-
   attributes :masteries
 
   def masteries
