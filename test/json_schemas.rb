@@ -137,4 +137,72 @@ module JSON_SCHEMAS
     },
     'required' => ['masteries']
   }
+
+  StatsSummary = {
+    'type' => 'object',
+    'properties' => {
+      'statsSummary' => {
+        'type' => 'object',
+        'properties' => {
+          'playerStatSummaries' => {
+            'type' => 'array',
+          },
+        },
+        'required' => ['playerStatSummaries'],
+      },
+    },
+    'required' => ['statsSummary'],
+  }
+
+  ChampionsMastery = {
+    'type' => 'object',
+    'properties' => {
+      'championsMastery' => {
+        'type' => 'object',
+        'properties' => {
+          'masteries' => {
+            'type' => 'array',
+            'items' => {
+            'type' => 'object',
+            'properties' => {
+              'championId' => {
+                'type' => 'integer',
+              },
+              'championLevel' => {
+                'type' => 'integer',
+              },
+              'championPoints' => {
+                'type' => 'integer',
+              },
+              'lastPlayTime' => {
+                'type' => 'integer',
+              },
+              'chestGranted' => {
+                'type' => 'boolean',
+              },
+              'tokensEarned' => {
+                'type' => 'integer',
+              },
+              'championData' => {
+                'type' => 'object',
+                'properties' => {
+                  'name' => {
+                    'type' => 'string',
+                  },
+                  'title' => {
+                    'type' => 'string',
+                  },
+                },
+                'required' => ['name', 'title'],
+              },
+            },
+            'required' => ['championId', 'championLevel', 'championPoints', 'lastPlayTime', 'chestGranted', 'tokensEarned', 'championData'],
+          },
+          }
+        },
+        'required' => ['masteries'],
+      }
+    },
+    'required' => ['championsMastery'],
+  }
 end

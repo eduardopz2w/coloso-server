@@ -45,40 +45,19 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
   test '#statsSummary should response OK' do
     get '/riot-api/lan/summoner/75119/stats/summary', params: { :season => 'SEASON2016' }
     assert_response(:success)
-    res = JSON.parse(@response.body)['statsSummary']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['playerStatSummaries'])
-    assert_equal('SEASON2016', res['season'])
-    res['playerStatSummaries'].each { |summary|
-      assert_instance_of(String, summary['playerStatSummaryType'])
-      assert_instance_of(Hash, summary['aggregatedStats'])
-    }
+    JSON::Validator.validate!(JSON_SCHEMAS::StatsSummary, getJsonResponse())
   end
 
   test '#statsSummary of notFound summoner should response empty stats' do
     get '/riot-api/lan/summoner/0/stats/summary', params: { :season => 'SEASON2016' }
     assert_response(:success)
-    res = JSON.parse(@response.body)['statsSummary']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['playerStatSummaries'])
-    assert_equal(0, res['playerStatSummaries'].length)
-    assert_equal('SEASON2016', res['season'])
+    JSON::Validator.validate!(JSON_SCHEMAS::StatsSummary, getJsonResponse())
   end
 
   test '#championsMastery should response OK' do
     get '/riot-api/lan/summoner/75119/champions-mastery'
     assert_response(:success)
-    res = JSON.parse(@response.body)['championsMastery']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['masteries'])
-    res['masteries'].each { |mastery|
-      assert_instance_of(Integer, mastery['championId'])
-      assert_instance_of(Integer, mastery['championLevel'])
-      assert_instance_of(Integer, mastery['championPoints'])
-      assert_instance_of(Hash, mastery['championData'])
-      assert_instance_of(String, mastery['championData']['name'])
-      assert_instance_of(String, mastery['championData']['title'])
-    }
+    JSON::Validator.validate!(JSON_SCHEMAS::ChampionsMastery, getJsonResponse())
   end
 
   test '#championsMastery of notFound summoner should response empty masteries' do
