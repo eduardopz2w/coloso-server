@@ -3,19 +3,6 @@ require 'json-schema'
 require 'json_schemas'
 
 class SummonersControllerTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
-
-  def testSummonerData(response)
-    res = JSON.parse(response.body)['summoner']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Integer, res['summonerId'], 'summonerId should be an Integer')
-    assert_instance_of(Integer, res['profileIconId'], 'profileIconId should be an Integer')
-    assert_instance_of(Integer, res['summonerLevel'], 'summonerLevel should be an Integer')
-    assert_instance_of(String, res['region'], 'region should be a String')
-  end
-
   test '#findByName should response the summonerData' do
     get '/riot-api/lan/summoner/by-name/armaghyon'
     assert_response(:success)
@@ -38,21 +25,7 @@ class SummonersControllerTest < ActionDispatch::IntegrationTest
   test '#runes should response OK' do
     get '/riot-api/lan/summoner/75119/runes'
     assert_response(:success)
-    res = JSON.parse(@response.body)['runes']
-    assert_instance_of(Hash, res)
-    assert_instance_of(Array, res['pages'])
-    res['pages'].each { |page|
-      assert_instance_of(String, page['name'])
-      assert_instance_of(Array, page['runes'])
-      page['runes'].each { |rune|
-        assert_instance_of(Integer, rune['runeId'])
-        assert_instance_of(Integer, rune['count'])
-        assert(rune['count'].between?(1, 9))
-        assert_instance_of(String, rune['name'])
-        assert_instance_of(String, rune['description'])
-        assert_instance_of(String, rune['image']['full'])
-      }
-    }
+    JSON::Validator.validate!(JSON_SCHEMAS::Runes, getJsonResponse())
   end
 
   test '#runes should response NOT_FOUND' do
