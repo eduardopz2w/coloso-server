@@ -535,4 +535,26 @@ module JSON_SCHEMAS
       },
     },
   }
+
+  ProPlayers = {
+    'type': 'array',
+    'items': {
+      'type': 'object',
+      'properties': {
+        'id': { 'type': 'string' },
+        'type': { 'type': 'string' },
+        'attributes': {
+          'type': 'object',
+          'properties': {
+            'name': { 'type': 'string' },
+            'imageUrl': { 'type': 'string' },
+            'realName': { 'type': 'string' },
+            'role': { 'type': 'string' },
+          },
+          'required': ['name', 'imageUrl', 'realName', 'role']
+        },
+      },
+      'required': ['id', 'type'],
+    },
+  }
 end
