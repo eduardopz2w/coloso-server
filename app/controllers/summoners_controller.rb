@@ -79,7 +79,7 @@ class SummonersController < ApplicationController
 
     begin
       masteries = riotApi.getSummonerChampionsMastery(summonerId)
-      return render(json: masteries)
+      return render(json: masteries, locale: 'en')
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
     end
