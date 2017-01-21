@@ -1,29 +1,17 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  matchId: 1
-  matchCreation: 1
-  region: MyString
-  spell1Id: 1
-  spell2Id: 1
-  championId: 1
-  highestAchievedSeasonTier: MyString
-  masteries: 
-  runes: 
-  stats: 
-  itemsOrder: 
-  skillsOrder: 
-
-two:
-  matchId: 1
-  matchCreation: 1
-  region: MyString
-  spell1Id: 1
-  spell2Id: 1
-  championId: 1
-  highestAchievedSeasonTier: MyString
-  masteries: 
-  runes: 
-  stats: 
-  itemsOrder: 
-  skillsOrder: 
+proBuild_one:
+  id: 1
+  matchId: 2404037444
+  matchCreation: 1484940378670
+  region: "na"
+  spell1Id: 4
+  spell2Id: 7
+  championId: 51
+  highestAchievedSeasonTier: "MASTER"
+  masteries: [{"rank": 5, "masteryId": 6111}, {"rank": 1, "masteryId": 6121}, {"rank": 5, "masteryId": 6131}, {"rank": 1, "masteryId": 6141}, {"rank": 5, "masteryId": 6151}, {"rank": 1, "masteryId": 6161}, {"rank": 5, "masteryId": 6211}, {"rank": 1, "masteryId": 6223}, {"rank": 5, "masteryId": 6232}, {"rank": 1, "masteryId": 6241}]
+  runes: [{"rank": 9, "runeId": 5245}, {"rank": 9, "runeId": 5289}, {"rank": 9, "runeId": 5317}, {"rank": 3, "runeId": 5337}]
+  stats: {"item0": 3140, "item1": 3085, "item2": 3036, "item3": 3006, "item4": 3031, "item5": 3094, "item6": 3363, "kills": 4, "deaths": 7, "winner": false, "assists": 9, "goldSpent": 15000, "totalHeal": 3376, "champLevel": 16, "goldEarned": 15820, "pentaKills": 0, "towerKills": 2, "doubleKills": 0, "quadraKills": 0, "tripleKills": 0, "unrealKills": 0, "wardsKilled": 12, "wardsPlaced": 9, "killingSprees": 0, "minionsKilled": 326, "firstBloodKill": false, "firstTowerKill": false, "inhibitorKills": 0, "totalScoreRank": 0, "trueDamageDealt": 2592, "trueDamageTaken": 100, "firstBloodAssist": false, "firstTowerAssist": true, "largestMultiKill": 1, "magicDamageDealt": 4757, "magicDamageTaken": 7685, "totalDamageDealt": 242740, "totalDamageTaken": 21013, "totalPlayerScore": 0, "totalUnitsHealed": 3, "combatPlayerScore": 0, "firstInhibitorKill": false, "largestKillingSpree": 0, "physicalDamageDealt": 235390, "physicalDamageTaken": 13228, "firstInhibitorAssist": false, "neutralMinionsKilled": 12, "objectivePlayerScore": 0, "largestCriticalStrike": 1427, "sightWardsBoughtInGame": 0, "visionWardsBoughtInGame": 0, "totalTimeCrowdControlDealt": 279, "trueDamageDealtToChampions": 474, "magicDamageDealtToChampions": 594, "totalDamageDealtToChampions": 20636, "neutralMinionsKilledTeamJungle": 3, "physicalDamageDealtToChampions": 19567, "neutralMinionsKilledEnemyJungle": 9}
+  itemsOrder: [{"itemId": 1055, "timestamp": 2570}, {"itemId": 2003, "timestamp": 2798}, {"itemId": 3340, "timestamp": 2993}, {"itemId": 1083, "timestamp": 206370}, {"itemId": 1038, "timestamp": 617908}, {"itemId": 3006, "timestamp": 619696}, {"itemId": 2031, "timestamp": 621291}, {"itemId": 1037, "timestamp": 823380}, {"itemId": 1042, "timestamp": 827157}, {"itemId": 3031, "timestamp": 1009415}, {"itemId": 1051, "timestamp": 1009809}, {"itemId": 3363, "timestamp": 1010756}, {"itemId": 3086, "timestamp": 1075617}, {"itemId": 1043, "timestamp": 1217745}, {"itemId": 3085, "timestamp": 1267777}, {"itemId": 3086, "timestamp": 1475179}, {"itemId": 3094, "timestamp": 1601502}, {"itemId": 3035, "timestamp": 1747793}, {"itemId": 3036, "timestamp": 1952115}, {"itemId": 3140, "timestamp": 2134503}]
+  skillsOrder: [{"skillSlot": 1, "timestamp": 72899, "levelUpType": "NORMAL"}, {"skillSlot": 2, "timestamp": 185132, "levelUpType": "NORMAL"}, {"skillSlot": 3, "timestamp": 247152, "levelUpType": "NORMAL"}, {"skillSlot": 1, "timestamp": 305842, "levelUpType": "NORMAL"}, {"skillSlot": 1, "timestamp": 389806, "levelUpType": "NORMAL"}, {"skillSlot": 4, "timestamp": 495117, "levelUpType": "NORMAL"}, {"skillSlot": 1, "timestamp": 591080, "levelUpType": "NORMAL"}, {"skillSlot": 2, "timestamp": 762016, "levelUpType": "NORMAL"}, {"skillSlot": 1, "timestamp": 897411, "levelUpType": "NORMAL"}, {"skillSlot": 2, "timestamp": 1047231, "levelUpType": "NORMAL"}, {"skillSlot": 4, "timestamp": 1136307, "levelUpType": "NORMAL"}, {"skillSlot": 2, "timestamp": 1335094, "levelUpType": "NORMAL"}, {"skillSlot": 2, "timestamp": 1557854, "levelUpType": "NORMAL"}, {"skillSlot": 3, "timestamp": 1670377, "levelUpType": "NORMAL"}, {"skillSlot": 3, "timestamp": 1826341, "levelUpType": "NORMAL"}, {"skillSlot": 4, "timestamp": 2073514, "levelUpType": "NORMAL"}]
+  pro_summoner_id: 1
