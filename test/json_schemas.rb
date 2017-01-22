@@ -536,25 +536,27 @@ module JSON_SCHEMAS
     },
   }
 
+  ProPlayer = {
+    'type': 'object',
+    'properties': {
+      'id': { 'type': 'string' },
+      'type': { 'type': 'string' },
+      'attributes': {
+        'type': 'object',
+        'properties': {
+          'name': { 'type': 'string' },
+          'imageUrl': { 'type': 'string' },
+          'realName': { 'type': 'string' },
+          'role': { 'type': 'string' },
+        },
+        'required': ['name', 'imageUrl', 'realName', 'role'],
+      },
+    },
+    'required': ['id', 'type'],
+  }
+
   ProPlayers = {
     'type': 'array',
-    'items': {
-      'type': 'object',
-      'properties': {
-        'id': { 'type': 'string' },
-        'type': { 'type': 'string' },
-        'attributes': {
-          'type': 'object',
-          'properties': {
-            'name': { 'type': 'string' },
-            'imageUrl': { 'type': 'string' },
-            'realName': { 'type': 'string' },
-            'role': { 'type': 'string' },
-          },
-          'required': ['name', 'imageUrl', 'realName', 'role']
-        },
-      },
-      'required': ['id', 'type'],
-    },
+    'items': self::ProPlayer,
   }
 end

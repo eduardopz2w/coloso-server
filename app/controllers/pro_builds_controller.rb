@@ -26,14 +26,14 @@ class ProBuildsController < ApplicationController
 
     proBuilds = query.includes(:pro_summoner => :pro_player).paginate(:page => params[:page], :per_page => params[:pageSize]).order('matchCreation DESC')
 
-    return render json: proBuilds, locale: 'en', meta: pagination_dict(proBuilds)
+    return render json: proBuilds, locale: 'en', meta: pagination_dict(proBuilds), include: '**'
   end
 
   def show
-    proBuild = ProBuild.find_by(id: params[:id])
+    proBuild = ProBuild.includes(:pro_summoner => :pro_player).find_by(id: params[:id])
 
     if proBuild
-      return render json: proBuild, locale: 'en'
+      return render json: proBuild, locale: 'en', include: '**'
     else
       return render(json: { :message => 'Build no encontrada' }, status: :not_found )
     end

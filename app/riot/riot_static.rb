@@ -12,6 +12,10 @@ module RiotStatic
     return @staticJsons[locale]['rune']['data'][runeId.to_s]
   end
 
+  def RiotStatic.item(itemId, locale)
+    return @staticJsons[locale]['item']['data'][itemId.to_s]
+  end
+
   def RiotStatic.champion(championId, locale = 'en')
     staticData = {}
 

@@ -13,8 +13,7 @@ class ProBuildSerializer < ActiveModel::Serializer
     :runes,
     :stats,
     :itemsOrder,
-    :skillsOrder,
-    :pro_player
+    :skillsOrder
 
   has_one :pro_summoner
 
@@ -24,7 +23,9 @@ class ProBuildSerializer < ActiveModel::Serializer
     }
   end
 
-  def pro_player
-    object.pro_summoner.pro_player
+  def itemsOrder
+    object.itemsOrder = object.itemsOrder.map { |item|
+      item.merge(RiotStatic.item(item['itemId'], instance_options[:locale]).slice('name', 'plaintext', 'gold'))
+    }
   end
 end
