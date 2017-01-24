@@ -4,10 +4,9 @@ class SummonersController < ApplicationController
     region = params[:region]
     summonerName = params[:summonerName]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      summoner = riotApi.getSummonerByName(summonerName)
+      summoner = RiotApi.getSummonerByName(summonerName, region)
       return render(json: summoner)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -19,13 +18,11 @@ class SummonersController < ApplicationController
   end
 
   def findById
-    region = params[:region]
-    summonerId = params[:summonerId]
+    sumUrid = params[:sumUrid]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      summoner = riotApi.getSummonerById(summonerId)
+      summoner = RiotApi.getSummonerById(sumUrid)
       return render(json: summoner)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -37,12 +34,10 @@ class SummonersController < ApplicationController
   end
 
   def runes
-    region = params[:region]
-    summonerId = params[:summonerId]
-    riotApi = RiotApi.new(region)
+    sumUrid = params[:sumUrid]
 
     begin
-      runes = riotApi.getSummonerRunes(summonerId)
+      runes = RiotApi.getSummonerRunes(sumUrid)
       return render(json: runes, locale: 'en')
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -54,13 +49,11 @@ class SummonersController < ApplicationController
   end
 
   def masteries
-    region = params[:region]
-    summonerId = params[:summonerId]
+    sumUrid = params[:sumUrid]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      masteries = riotApi.getSummonerMasteries(summonerId)
+      masteries = RiotApi.getSummonerMasteries(sumUrid)
       return render(json: masteries)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -72,13 +65,11 @@ class SummonersController < ApplicationController
   end
 
   def championsMastery
-    region = params[:region]
-    summonerId = params[:summonerId]
+    sumUrid = params[:sumUrid]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      masteries = riotApi.getSummonerChampionsMastery(summonerId)
+      masteries = RiotApi.getSummonerChampionsMastery(sumUrid)
       return render(json: masteries, locale: 'en')
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -86,14 +77,12 @@ class SummonersController < ApplicationController
   end
 
   def statsSummary
-    region = params[:region]
-    summonerId = params[:summonerId]
+    sumUrid = params[:sumUrid]
     season = params[:season]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      stats = riotApi.getSummonerStatsSummary(summonerId, season)
+      stats = RiotApi.getSummonerStatsSummary(sumUrid, season)
       return render(json: stats)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -103,13 +92,10 @@ class SummonersController < ApplicationController
   end
 
   def leagueEntry
-    region = params[:region]
-    summonerId = params[:summonerId].to_i
-
-    riotApi = RiotApi.new(region)
+    sumUrid = params[:sumUrid]
 
     begin
-      leagueEntry = riotApi.getSummonerLeagueEntry(summonerId)
+      leagueEntry = RiotApi.getSummonerLeagueEntry(sumUrid)
       return render(json: leagueEntry)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -119,13 +105,11 @@ class SummonersController < ApplicationController
   end
 
   def gamesRecent
-    region = params[:region]
-    summonerId = params[:summonerId].to_i
+    sumUrid = params[:sumUrid]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      games = riotApi.getSummonerGamesRecent(summonerId)
+      games = RiotApi.getSummonerGamesRecent(sumUrid)
       return render(json: games)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') })
@@ -135,13 +119,11 @@ class SummonersController < ApplicationController
   end
 
   def gameCurrent
-    region = params[:region]
-    summonerId = params[:summonerId].to_i
+    sumUrid = params[:sumUrid]
 
-    riotApi = RiotApi.new(region)
 
     begin
-      games = riotApi.getSummonerGameCurrent(summonerId)
+      games = RiotApi.getSummonerGameCurrent(sumUrid)
 
       games['participants'] = games['participants'].map { |participant|
         participant['runes'] = participant['runes'].map { |rune|

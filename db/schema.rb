@@ -13,41 +13,38 @@
 ActiveRecord::Schema.define(version: 20170117201833) do
 
   create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
-    t.string   "region"
+    t.string   "summonerUrid", null: false
     t.json     "masteries"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "games_recents", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
+    t.string   "summonerUrid", null: false
     t.string   "region"
     t.json     "games"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "league_entries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
+    t.string   "summonerUrid", null: false
     t.string   "region"
     t.json     "entries"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
+    t.string   "summonerUrid", null: false
     t.json     "pages"
-    t.string   "region"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint   "matchId"
     t.bigint   "matchCreation"
-    t.string   "region"
     t.integer  "spell1Id"
     t.integer  "spell2Id"
     t.integer  "championId"
@@ -73,7 +70,7 @@ ActiveRecord::Schema.define(version: 20170117201833) do
   end
 
   create_table "pro_summoners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
+    t.string   "summonerUrid",  null: false
     t.string   "region"
     t.bigint   "lastCheck"
     t.integer  "pro_player_id"
@@ -83,25 +80,22 @@ ActiveRecord::Schema.define(version: 20170117201833) do
   end
 
   create_table "runes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
+    t.string   "summonerUrid", null: false
     t.json     "pages"
-    t.string   "region"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "stats_summaries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "summonerId"
-    t.string   "region"
+    t.string   "summonerUrid",        null: false
     t.string   "season"
     t.json     "playerStatSummaries"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
 
-  create_table "summoners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "summoners", primary_key: "urid", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
-    t.integer  "summonerId"
     t.integer  "profileIconId"
     t.integer  "summonerLevel"
     t.string   "region"

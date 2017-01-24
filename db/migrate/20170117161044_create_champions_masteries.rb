@@ -1,8 +1,7 @@
 class CreateChampionsMasteries < ActiveRecord::Migration[5.0]
   def change
     create_table :champions_masteries do |t|
-      t.integer :summonerId
-      t.string :region
+      t.string :summonerUrid, unique: true, null: false
       t.json :masteries
 
       t.timestamps

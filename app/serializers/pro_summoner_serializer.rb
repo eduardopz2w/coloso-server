@@ -1,5 +1,5 @@
 class ProSummonerSerializer < ActiveModel::Serializer
-  attributes :id, :summonerId, :region
+  attributes :id, :summonerUrid, :region
 
   has_one :pro_player
 end

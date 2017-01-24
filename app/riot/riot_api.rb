@@ -3,47 +3,43 @@ require 'http'
 API_KEY = ENV['RIOT_API_KEY']
 
 def regionToPlatform(region)
-  if region == 'br'
+  if region == 'BR'
     return 'br1'
-  elsif region == 'eune'
+  elsif region == 'EUNE'
     return 'eun1'
-  elsif region == 'euw'
+  elsif region == 'EUW'
     return 'euw1'
-  elsif region == 'jp'
+  elsif region == 'JP'
     return 'jp1'
-  elsif region == 'kr'
+  elsif region == 'KR'
     return 'kr'
-  elsif region == 'lan'
+  elsif region == 'LAN'
     return 'la1'
-  elsif region == 'las'
+  elsif region == 'LAS'
     return 'la2'
-  elsif region == 'na'
+  elsif region == 'NA'
     return 'na1'
-  elsif region == 'oce'
+  elsif region == 'OCE'
     return 'oc1'
-  elsif region == 'ru'
+  elsif region == 'RU'
     return 'ru'
   end
 end
 
-class RiotClient
-  def initialize(region)
-    @region = region
-  end
-
-  def fetchSummonerByName(sumName)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.4/summoner/by-name/#{sumName}"
+module RiotClient
+  def self.fetchSummonerByName(sumName, region)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/by-name/#{sumName}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
       jsonData = response.parse.values[0]
 
       return {
-        :summonerId => jsonData['id'],
+        :urid => URID.Generate(jsonData['id'], region),
         :name => jsonData['name'],
         :summonerLevel => jsonData['summonerLevel'],
         :profileIconId => jsonData['profileIconId'],
-        :region => @region,
+        :region => region,
       }
 
     elsif response.code == 404
@@ -55,19 +51,21 @@ class RiotClient
     end
   end
 
-  def fetchSummonerById(sumId)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.4/summoner/#{sumId}"
+  def self.fetchSummonerByUrid(urid)
+    region = URID.GetRegion(urid)
+    sumId = URID.GetId(urid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region}/v1.4/summoner/#{sumId}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
       jsonData = response.parse.values[0]
 
       return {
-        :summonerId => jsonData['id'],
+        :urid => urid,
         :name => jsonData['name'],
         :summonerLevel => jsonData['summonerLevel'],
         :profileIconId => jsonData['profileIconId'],
-        :region => @region,
+        :region => region,
       }
 
     elsif response.code == 404
@@ -79,8 +77,9 @@ class RiotClient
     end
   end
 
-  def fetchSummonerRunes(sumId)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.4/summoner/#{sumId}/runes"
+  def self.fetchSummonerRunes(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/#{URID.GetId(sumUrid)}/runes"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
@@ -114,7 +113,7 @@ class RiotClient
         end
       end
 
-      return { 'summonerId' => jsonData['summonerId'], 'pages' => groupPages, 'region' => @region }
+      return { 'summonerUrid' => sumUrid, 'pages' => groupPages}
 
     elsif response.code == 404
       raise EntityNotFoundError
@@ -125,17 +124,17 @@ class RiotClient
     end
   end
 
-  def fetchSummonerMasteries(sumId)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.4/summoner/#{sumId}/masteries"
+  def self.fetchSummonerMasteries(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/#{URID.GetId(sumUrid)}/masteries"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
       jsonData = response.parse.values[0]
 
       return {
-        :summonerId => jsonData['summonerId'],
+        :summonerUrid => sumUrid,
         :pages => jsonData['pages'],
-        :region => @region,
       }
 
     elsif response.code == 404
@@ -147,22 +146,22 @@ class RiotClient
     end
   end
 
-  def fetchSummonerChampionsMastery(sumId)
-    url = "https://#{@region}.api.pvp.net/championmastery/location/#{regionToPlatform(@region)}/player/#{sumId}/topchampions"
+  def self.fetchSummonerChampionsMastery(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    platform = regionToPlatform(region)
+    url = "https://#{region.downcase}.api.pvp.net/championmastery/location/#{platform}/player/#{URID.GetId(sumUrid)}/topchampions"
     response = HTTP.get(url, :params => { :api_key => API_KEY, :count => 200 })
 
     if response.code == 200
       return {
-        'summonerId' => sumId,
-        'region' => @region,
-        'masteries' => response.parse,
+        :summonerUrid => sumUrid,
+        :masteries => response.parse,
       }
 
     elsif response.code == 404
       return {
-        'summonerId' => sumId,
-        'region' => @region,
-        'masteries' => [],
+        :summonerUrid => sumUrid,
+        :masteries => [],
       }
     elsif response.code == 429
       raise RiotLimitReached
@@ -171,22 +170,21 @@ class RiotClient
     end
   end
 
-  def fetchSummonerStatsSummary(sumId, season = 'SEASON2017')
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.3/stats/by-summoner/#{sumId}/summary"
+  def self.fetchSummonerStatsSummary(sumUrid, season = 'SEASON2017')
+    region = URID.GetRegion(sumUrid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/summary"
     response = HTTP.get(url, :params => { :api_key => API_KEY, :season => season })
 
     if response.code == 200
       return {
-        :summonerId => sumId,
-        :region => @region,
+        :summonerUrid => sumUrid,
         :season => season,
         :playerStatSummaries => response.parse['playerStatSummaries'],
       }
 
     elsif response.code == 404
       return {
-        :summonerId => sumId,
-        :region => @region,
+        :summonerUrid => sumUrid,
         :season => season,
         :playerStatSummaries => [],
       }
@@ -197,8 +195,11 @@ class RiotClient
     end
   end
 
-  def fetchSummonersLeagueEntries(sumIds)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
+  def self.fetchSummonersLeagueEntries(sumUrids)
+    region = URID.GetRegion(sumUrids[0])
+    sumIds = sumUrids.map { |sumUrid| URID.GetId(sumUrid) }
+
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
@@ -208,14 +209,12 @@ class RiotClient
       sumIds.each do |sumId|
         if jsonResponse.has_key?(sumId.to_s)
           leagueEntries.push(
-            :summonerId => sumId,
-            :region => @region,
+            :summonerUrid => URID.Generate(sumId, region),
             :entries => jsonResponse[sumId.to_s],
           )
         else
           leagueEntries.push(
-            :summonerId => sumId,
-            :region => @region,
+            :summonerUrid => URID.Generate(sumId, region),
             :entries => [],
           )
         end
@@ -227,8 +226,7 @@ class RiotClient
 
       sumIds.each do |sumId|
         leagueEntries.push({
-            :summonerId => sumId,
-            :region => @region,
+            :summonerUrid => URID.Generate(sumId, region),
             :entries => [],
         })
       end
@@ -241,22 +239,29 @@ class RiotClient
     end
   end
 
-  def fetchSummonerGamesRecent(sumId)
-    url = "https://#{@region}.api.pvp.net/api/lol/#{@region}/v1.3/game/by-summoner/#{sumId}/recent"
+  def self.fetchSummonerGamesRecent(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/game/by-summoner/#{URID.GetId(sumUrid)}/recent"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
       jsonResponse = response.parse
 
+      games = jsonResponse['games'].each { |game|
+        game['fellowPlayers'] = game['fellowPlayers'].each { |player|
+          player['summonerUrid'] = URID.Generate(player['summonerId'], region)
+          player.delete('summonerId')
+          player
+        }
+        game
+      }
       return {
-        :summonerId => sumId,
-        :region => @region,
-        :games => jsonResponse['games'],
+        :summonerUrid => sumUrid,
+        :games => games,
       }
     elsif response.code == 404
       return {
-        :summonerId => sumId,
-        :region => @region,
+        :summonerUrid => sumUrid,
         :games => [],
       }
     elsif response.code == 429
@@ -266,16 +271,24 @@ class RiotClient
     end
   end
 
-  def fetchSummonerGameCurrent(sumId)
-    url = "https://#{@region}.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/#{regionToPlatform(@region)}/#{sumId}"
+  def self.fetchSummonerGameCurrent(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    platform = regionToPlatform(region)
+    url = "https://#{region.downcase}.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
       jsonResponse = response.parse
 
       gameData = jsonResponse
-      gameData['focusSummonerId'] = sumId
-      gameData['regio'] = @region
+      gameData['focusSummonerUrid'] = sumUrid
+      gameData['region'] = URID.GetRegion(sumUrid)
+
+      gameData['participants'] = gameData['participants'].map { |participant|
+        participant['summonerUrid'] = URID.Generate(participant['summonerId'], region)
+        participant.delete('summonerId')
+        participant
+      }
 
       return gameData
     elsif response.code == 404
@@ -288,12 +301,8 @@ class RiotClient
   end
 end
 
-class RiotCache
-  def initialize(region)
-    @region = region
-  end
-
-  def isOutDated(updatedAt, cacheMinutes)
+module RiotCache
+  def self.isOutDated(updatedAt, cacheMinutes)
     diffMin = (Time.zone.now - updatedAt) / 60
 
     if diffMin > cacheMinutes
@@ -303,8 +312,8 @@ class RiotCache
     return false
   end
 
-  def findSummonerByName(sumName, cacheMinutes = 5)
-    summoner = Summoner.find_by(:name => sumName, :region => @region)
+  def self.findSummonerByName(sumName, region, cacheMinutes = 5)
+    summoner = Summoner.find_by(:name => sumName, :region => region)
 
     if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
       summoner = false
@@ -313,8 +322,8 @@ class RiotCache
     return summoner
   end
 
-  def saveSummonerByName(sumData)
-    sumFound = Summoner.find_by(:name => sumData[:name], :region => @region)
+  def self.saveSummonerByName(sumData)
+    sumFound = Summoner.find_by(:name => sumData[:name], :region => sumData[:region])
 
     if sumFound
       sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
@@ -326,8 +335,8 @@ class RiotCache
     end
   end
 
-  def findSummonerById(sumId, cacheMinutes = 5)
-    summoner = Summoner.find_by(:summonerId => sumId, :region => @region)
+  def self.findSummonerById(sumUrid, cacheMinutes = 5)
+    summoner = Summoner.find_by(:urid => sumUrid)
 
     if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
       summoner = false
@@ -336,8 +345,8 @@ class RiotCache
     return summoner
   end
 
-  def saveSummonerById(sumData)
-    sumFound = Summoner.find_by(:summonerId => sumData[:summonerId], :region => @region)
+  def self.saveSummonerById(sumData)
+    sumFound = Summoner.find_by(:urid => sumData[:urid])
 
     if sumFound
       sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
@@ -349,8 +358,8 @@ class RiotCache
     end
   end
 
-  def findSummonerRunes(sumId, cacheMinutes = 5)
-    runes = Rune.find_by(:summonerId => sumId, :region => @region)
+  def self.findSummonerRunes(sumUrid, cacheMinutes = 5)
+    runes = Rune.find_by(:summonerUrid => sumUrid)
 
     if runes and self.isOutDated(runes.updated_at, cacheMinutes)
       return false
@@ -359,8 +368,8 @@ class RiotCache
     return runes
   end
 
-  def saveSummonerRunes(runesData)
-    runes = Rune.find_by(:summonerId => runesData['summonerId'], 'region' => @region)
+  def self.saveSummonerRunes(runesData)
+    runes = Rune.find_by(:summonerUrid => runesData['summonerUrid'])
 
     if runes
       runes.update(runesData.slice('pages'))
@@ -371,8 +380,8 @@ class RiotCache
     end
   end
 
-  def findSummonerMasteries(sumId, cacheMinutes = 0)
-    masteries = Mastery.find_by(:summonerId => sumId, :region => @region)
+  def self.findSummonerMasteries(sumUrid, cacheMinutes = 5)
+    masteries = Mastery.find_by(:summonerUrid => sumUrid)
 
     if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
       masteries = false
@@ -381,8 +390,8 @@ class RiotCache
     return masteries
   end
 
-  def saveSummonerMasteries(masteriesData)
-    masteries = Mastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
+  def self.saveSummonerMasteries(masteriesData)
+    masteries = Mastery.find_by(:summonerUrid => masteriesData[:summonerUrid])
 
     if masteries
       masteries.update(masteriesData.slice(:pages))
@@ -393,8 +402,8 @@ class RiotCache
     end
   end
 
-  def findSummonerChampionsMastery(sumId, cacheMinutes = 5)
-    masteries = ChampionsMastery.find_by(:summonerId => sumId, :region => @region)
+  def self.findSummonerChampionsMastery(sumUrid, cacheMinutes = 5)
+    masteries = ChampionsMastery.find_by(:summonerUrid => sumUrid)
 
     if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
       return false
@@ -403,8 +412,8 @@ class RiotCache
     return masteries
   end
 
-  def saveSummonerChampionsMastery(masteriesData)
-    masteries = ChampionsMastery.find_by(:summonerId => masteriesData[:summonerId], :region => @region)
+  def self.saveSummonerChampionsMastery(masteriesData)
+    masteries = ChampionsMastery.find_by(:summonerUrid => masteriesData[:summonerUrid])
 
     if masteries
       masteries.update(masteriesData.slice(:masteries))
@@ -415,8 +424,8 @@ class RiotCache
     end
   end
 
-  def findSummonerStatsSummary(sumId, season, cacheMinutes = 5)
-    stats = StatsSummary.find_by(:summonerId => sumId, :region => @region, :season => season)
+  def self.findSummonerStatsSummary(sumUrid, season, cacheMinutes = 5)
+    stats = StatsSummary.find_by(:summonerUrid => sumUrid, :season => season)
 
     if stats and self.isOutDated(stats.updated_at, cacheMinutes)
       stats = false
@@ -425,8 +434,8 @@ class RiotCache
     return stats
   end
 
-  def saveSummonerStatsSummary(statsData)
-    stats = StatsSummary.find_by(:summonerId => statsData[:summonerId], :region => @region, :season => statsData[:season])
+  def self.saveSummonerStatsSummary(statsData)
+    stats = StatsSummary.find_by(:summonerUrid => statsData[:summonerUrid], :season => statsData[:season])
 
     if stats
       stats.update(statsData.slice(:playerStatSummaries))
@@ -437,10 +446,10 @@ class RiotCache
     end
   end
 
-  def findSummonersLeagueEntries(sumIds, cacheMinutes = 5)
-    leagueEntries = LeagueEntry.where(:summonerId => sumIds, :region => @region)
+  def self.findSummonersLeagueEntries(sumUrids, cacheMinutes = 5)
+    leagueEntries = LeagueEntry.where(:summonerUrid => sumUrids)
 
-    if leagueEntries.length != sumIds.length
+    if leagueEntries.length != sumUrids.length
       return false
     end
 
@@ -453,11 +462,11 @@ class RiotCache
     return leagueEntries
   end
 
-  def saveSummonersLeagueEntries(leagueEntries)
+  def self.saveSummonersLeagueEntries(leagueEntries)
     entries = []
 
     leagueEntries.each do |leagueEntry|
-      leagueEntryFound = LeagueEntry.find_by(:summonerId => leagueEntry[:summonerId], :region => @region)
+      leagueEntryFound = LeagueEntry.find_by(:summonerUrid => leagueEntry[:summonerUrid])
 
       if leagueEntryFound
         leagueEntryFound.update(leagueEntry.slice(:entries))
@@ -471,8 +480,8 @@ class RiotCache
     return entries
   end
 
-  def findSummonerGamesRecent(sumId, cacheMinutes = 5)
-    games = GamesRecent.find_by(:summonerId => sumId, :region => @region)
+  def self.findSummonerGamesRecent(sumUrid, cacheMinutes = 5)
+    games = GamesRecent.find_by(:summonerUrid => sumUrid)
 
     if games and self.isOutDated(games.updated_at, cacheMinutes)
       games = false
@@ -481,8 +490,8 @@ class RiotCache
     return games
   end
 
-  def saveSummonerGamesRecent(gamesData)
-    games = GamesRecent.find_by(:summonerId => gamesData[:summonerId], :region => @region)
+  def self.saveSummonerGamesRecent(gamesData)
+    games = GamesRecent.find_by(:summonerUrid => gamesData[:summonerUrid])
 
     if games
       games.update(gamesData.slice(:games))
@@ -494,133 +503,128 @@ class RiotCache
   end
 end
 
-class RiotApi
-  def initialize(region)
-    @region = region
-    @client = RiotClient.new(region)
-    @cache = RiotCache.new(region)
-  end
+module RiotApi
 
-  def getSummonerByName(sumName)
-      summoner = @cache.findSummonerByName(sumName)
+  def self.getSummonerByName(sumName, region)
+      summoner = RiotCache.findSummonerByName(sumName, region)
 
       if summoner
         return summoner
       else
-        sumData = @client.fetchSummonerByName(sumName)
-        summoner = @cache.saveSummonerByName(sumData)
+        sumData = RiotClient.fetchSummonerByName(sumName, region)
+        summoner = RiotCache.saveSummonerByName(sumData)
         return summoner
       end
   end
 
-  def getSummonerById(sumId)
-      summoner = @cache.findSummonerById(sumId)
+  def self.getSummonerById(sumUrid)
+      summoner = RiotCache.findSummonerById(sumUrid)
 
       if summoner
         return summoner
       else
-        sumData = @client.fetchSummonerById(sumId)
-        summoner = @cache.saveSummonerById(sumData)
+        sumData = RiotClient.fetchSummonerByUrid(sumUrid)
+        summoner = RiotCache.saveSummonerById(sumData)
         return summoner
       end
   end
 
-  def getSummonerRunes(sumId)
-      runes = @cache.findSummonerRunes(sumId)
+  def self.getSummonerRunes(sumUrid)
+      runes = RiotCache.findSummonerRunes(sumUrid)
 
       if runes
         return runes
       else
-        runesData = @client.fetchSummonerRunes(sumId)
-        runes = @cache.saveSummonerRunes(runesData)
+        runesData = RiotClient.fetchSummonerRunes(sumUrid)
+        runes = RiotCache.saveSummonerRunes(runesData)
         return runes
       end
   end
 
-  def getSummonerMasteries(sumId)
-      masteries = @cache.findSummonerMasteries(sumId)
+  def self.getSummonerMasteries(sumUrid)
+      masteries = RiotCache.findSummonerMasteries(sumUrid)
 
       if masteries
         return masteries
       else
-        masteriesData = @client.fetchSummonerMasteries(sumId)
-        masteries = @cache.saveSummonerMasteries(masteriesData)
+        masteriesData = RiotClient.fetchSummonerMasteries(sumUrid)
+        masteries = RiotCache.saveSummonerMasteries(masteriesData)
         return masteries
       end
   end
 
-  def getSummonerChampionsMastery(sumId)
-      masteries = @cache.findSummonerChampionsMastery(sumId)
+  def self.getSummonerChampionsMastery(sumUrid)
+      masteries = RiotCache.findSummonerChampionsMastery(sumUrid)
 
       if masteries
         return masteries
       else
-        masteriesData = @client.fetchSummonerChampionsMastery(sumId)
-        masteries = @cache.saveSummonerChampionsMastery(masteriesData)
+        masteriesData = RiotClient.fetchSummonerChampionsMastery(sumUrid)
+        masteries = RiotCache.saveSummonerChampionsMastery(masteriesData)
         return masteries
       end
   end
 
-  def getSummonerStatsSummary(sumId, season)
-      stats = @cache.findSummonerStatsSummary(sumId, season)
+  def self.getSummonerStatsSummary(sumUrid, season)
+      stats = RiotCache.findSummonerStatsSummary(sumUrid, season)
 
       if stats
         return stats
       else
-        statsData = @client.fetchSummonerStatsSummary(sumId, season)
-        stats = @cache.saveSummonerStatsSummary(statsData)
+        statsData = RiotClient.fetchSummonerStatsSummary(sumUrid, season)
+        stats = RiotCache.saveSummonerStatsSummary(statsData)
         return stats
       end
   end
 
-  def getSummonerLeagueEntry(sumId)
-      leagueEntries = @cache.findSummonersLeagueEntries([sumId])
+  def self.getSummonerLeagueEntry(sumUrid)
+      leagueEntries = RiotCache.findSummonersLeagueEntries([sumUrid])
 
       if leagueEntries
         return leagueEntries[0]
       else
-        leagueEntriesData = @client.fetchSummonersLeagueEntries([sumId])
-        leagueEntries = @cache.saveSummonersLeagueEntries(leagueEntriesData)
+        leagueEntriesData = RiotClient.fetchSummonersLeagueEntries([sumUrid])
+        leagueEntries = RiotCache.saveSummonersLeagueEntries(leagueEntriesData)
         return leagueEntries[0]
       end
   end
 
-  def getSummonersLeagueEntry(sumIds)
-      leagueEntries = @cache.findSummonersLeagueEntries(sumIds)
+  def self.getSummonersLeagueEntry(sumUrids)
+      leagueEntries = RiotCache.findSummonersLeagueEntries(sumUrids)
 
       if leagueEntries
         return leagueEntries
       else
-        leagueEntriesData = @client.fetchSummonersLeagueEntries(sumIds)
-        leagueEntries = @cache.saveSummonersLeagueEntries(leagueEntriesData)
+        leagueEntriesData = RiotClient.fetchSummonersLeagueEntries(sumUrids)
+        leagueEntries = RiotCache.saveSummonersLeagueEntries(leagueEntriesData)
         return leagueEntries
       end
   end
 
-  def getSummonerGamesRecent(sumId)
-      games = @cache.findSummonerGamesRecent(sumId)
+  def self.getSummonerGamesRecent(sumUrid)
+      games = RiotCache.findSummonerGamesRecent(sumUrid)
 
       if games
         return games
       else
-        gamesData = @client.fetchSummonerGamesRecent(sumId)
-        games = @cache.saveSummonerGamesRecent(gamesData)
+        gamesData = RiotClient.fetchSummonerGamesRecent(sumUrid)
+        games = RiotCache.saveSummonerGamesRecent(gamesData)
         return games
       end
   end
 
-  def getSummonerGameCurrent(sumId)
-    game = @client.fetchSummonerGameCurrent(sumId)
+  def self.getSummonerGameCurrent(sumUrid)
+    game = RiotClient.fetchSummonerGameCurrent(sumUrid)
 
-    sumIds = []
-    game['participants'].each { |participant| sumIds.push(participant['summonerId'])}
+    sumUrids = []
+    game['participants'].each { |participant| sumUrids.push(participant['summonerUrid'])}
 
-    leagueEntries = self.getSummonersLeagueEntry(sumIds)
+    leagueEntries = self.getSummonersLeagueEntry(sumUrids)
 
     game['participants'].each do |participant|
-      sumId = participant['summonerId']
+      sumUrid = participant['summonerUrid']
 
-      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
+      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerUrid'] == sumUrid }
     end
 
     return game

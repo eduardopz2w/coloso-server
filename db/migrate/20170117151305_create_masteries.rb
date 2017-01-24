@@ -1,9 +1,8 @@
 class CreateMasteries < ActiveRecord::Migration[5.0]
   def change
     create_table :masteries do |t|
-      t.integer :summonerId
+      t.string :summonerUrid, unique: true, null: false
       t.json :pages
-      t.string :region
       t.timestamps
     end
   end

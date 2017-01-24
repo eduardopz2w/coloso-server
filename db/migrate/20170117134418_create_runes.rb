@@ -1,10 +1,13 @@
 class CreateRunes < ActiveRecord::Migration[5.0]
   def change
     create_table :runes do |t|
-      t.integer :summonerId
+      t.string :summonerUrid, unique: true, null: false
       t.json :pages
-      t.string :region
       t.timestamps
     end
+  end
+
+  def down
+    drop_table :runes
   end
 end

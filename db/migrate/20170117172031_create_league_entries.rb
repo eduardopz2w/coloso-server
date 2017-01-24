@@ -1,7 +1,7 @@
 class CreateLeagueEntries < ActiveRecord::Migration[5.0]
   def change
     create_table :league_entries do |t|
-      t.integer :summonerId
+      t.string :summonerUrid, unique: true, null: false
       t.string :region
       t.json :entries
 
