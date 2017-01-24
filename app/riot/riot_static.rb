@@ -24,7 +24,7 @@ module RiotStatic
   def RiotStatic.champion(championId, locale = 'en')
     staticData = {}
 
-    @staticJsons[locale]['champion']['data'].each do |champName, champData|
+    @staticJsons[locale.to_s]['champion']['data'].each do |champName, champData|
       if champData['key'] == championId.to_s
         staticData = champData
       end
