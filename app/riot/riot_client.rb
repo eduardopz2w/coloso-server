@@ -104,13 +104,14 @@ module RiotClient
             })
           end
 
-          groupPages.push({
-              'id' => page['id'],
-              'name' => page['name'],
-              'current' => page['current'],
-              'runes' => groupRunes,
-          })
         end
+        
+        groupPages.push({
+          'id' => page['id'],
+          'name' => page['name'],
+          'current' => page['current'],
+          'runes' => groupRunes,
+        })
       end
 
       return { 'summonerUrid' => sumUrid, 'pages' => groupPages}
