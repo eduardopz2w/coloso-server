@@ -19,13 +19,13 @@ class ProBuildSerializer < ActiveModel::Serializer
 
   def runes
     object.runes = object.runes.map { |rune|
-      rune.merge(RiotStatic.rune(rune['runeId'], instance_options[:locale]).slice('name', 'description', 'image'))
+      rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
     }
   end
 
   def itemsOrder
     object.itemsOrder = object.itemsOrder.map { |item|
-      item.merge(RiotStatic.item(item['itemId'], instance_options[:locale]).slice('name', 'plaintext', 'gold'))
+      item.merge(RiotStatic.item(item['itemId'], I18n.locale).slice('name', 'plaintext', 'gold'))
     }
   end
 end

@@ -6,11 +6,10 @@ def pagination_dict(object)
 end
 
 class ProBuildsController < ApplicationController
-  before_filter :forceJson
-  # TODO: Agregar locales
-
   def index
     query = ProBuild
+    pageNumber = params[:page] && params[:page]['number'] || 1
+    pageSize = params[:page] && params[:page]['size'] || 25
 
     if params[:championId]
       query = query.where(championId: params[:championId].to_i)
@@ -24,24 +23,19 @@ class ProBuildsController < ApplicationController
       end
     end
 
-    proBuilds = query.includes(:pro_summoner => :pro_player).paginate(:page => params[:page], :per_page => params[:pageSize]).order('matchCreation DESC')
+    proBuilds = query.includes(:pro_summoner => :pro_player).paginate(:page => pageNumber, :per_page => pageSize).order('matchCreation DESC')
 
-    return render json: proBuilds, locale: 'en', meta: pagination_dict(proBuilds), include: '**'
+    return render json: proBuilds, meta: pagination_dict(proBuilds), include: '**'
   end
 
   def show
     proBuild = ProBuild.includes(:pro_summoner => :pro_player).find_by(id: params[:id])
 
     if proBuild
-      return render json: proBuild, locale: 'en', include: '**'
+      return render json: proBuild, include: '**'
     else
-      return render(json: { :message => 'Build no encontrada' }, status: :not_found )
+      return render(json: { :message => I18n.t('build_not_found') }, status: :not_found )
     end
 
   end
-
-  private
-    def forceJson
-      request.format = "json"
-    end
 end

@@ -2,6 +2,7 @@ es:
   summoner_not_found: 'Invocador no encontrado'
   runes_not_found: 'Paginas de runas no encontradas'
   games_not_found: 'Juegos no encontrados'
-  riot_limit_error: 'Error al conectar con los servidores de Riot, intenta de nuevo en unos segundos'
+  riot_limit_error: 'Los servidores de Riot Games no estan disponibles en este momento, intente nuevamente en unos minutos'
   riot_server_error: 'Error al conectar con los servidores de Riot, por favor intente mas tarde'
   summoner_not_in_game: 'El invocador no esta en juego'
+  build_not_found: 'Build no encontrada'

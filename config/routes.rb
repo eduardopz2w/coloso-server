@@ -10,5 +10,4 @@ Rails.application.routes.draw do
   get '/riot-api/summoner/:sumUrid/games/recent', to: 'summoners#gamesRecent'
   get '/riot-api/summoner/:sumUrid/games/current', to: 'summoners#gameCurrent'
   resources :pro_builds, path: 'pro-builds', only: ['index', 'show']
-  resources :pro_players, path: 'pro-players'
 end
