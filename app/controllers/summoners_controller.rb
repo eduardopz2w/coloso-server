@@ -9,11 +9,11 @@ class SummonersController < ApplicationController
       summoner = RiotApi.getSummonerByName(summonerName, region)
       return render(json: summoner)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_found') }, status: :not_found)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -25,11 +25,11 @@ class SummonersController < ApplicationController
       summoner = RiotApi.getSummonerById(sumUrid)
       return render(json: summoner)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_found') }, status: :not_found)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -40,11 +40,11 @@ class SummonersController < ApplicationController
       runes = RiotApi.getSummonerRunes(sumUrid)
       return render(json: runes)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('runes_not_found') }, status: :not_found)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -56,11 +56,11 @@ class SummonersController < ApplicationController
       masteries = RiotApi.getSummonerMasteries(sumUrid)
       return render(json: masteries)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('masteries_not_found') }, status: :not_found)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -72,7 +72,7 @@ class SummonersController < ApplicationController
       masteries = RiotApi.getSummonerChampionsMastery(sumUrid)
       return render(json: masteries)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     end
   end
 
@@ -85,9 +85,9 @@ class SummonersController < ApplicationController
       stats = RiotApi.getSummonerStatsSummary(sumUrid, season)
       return render(json: stats)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -98,9 +98,9 @@ class SummonersController < ApplicationController
       leagueEntry = RiotApi.getSummonerLeagueEntry(sumUrid)
       return render(json: leagueEntry)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -112,9 +112,9 @@ class SummonersController < ApplicationController
       games = RiotApi.getSummonerGamesRecent(sumUrid)
       return render(json: games)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
@@ -133,11 +133,11 @@ class SummonersController < ApplicationController
       }
       return render(json: games)
     rescue RiotLimitReached
-      return render(json: { :message => I18n.t('riot_limit_error') })
+      return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_in_game') }, status: :not_found)
     rescue
-      return render(json: { :message => I18n.t('riot_server_error') })
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 end
