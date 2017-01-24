@@ -7,6 +7,7 @@ class CreateProBuilds < ActiveRecord::Migration[5.0]
       t.integer :spell2Id
       t.integer :championId
       t.string :highestAchievedSeasonTier
+      t.string :region
       t.json :masteries
       t.json :runes
       t.json :stats
