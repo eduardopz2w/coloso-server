@@ -1,6 +1,4 @@
 class ProBuildSerializer < ActiveModel::Serializer
-  type 'proBuild'
-
   attributes :id,
     :matchId,
     :matchCreation,
@@ -8,6 +6,7 @@ class ProBuildSerializer < ActiveModel::Serializer
     :spell1Id,
     :spell2Id,
     :championId,
+    :championData,
     :highestAchievedSeasonTier,
     :masteries,
     :runes,
@@ -27,5 +26,9 @@ class ProBuildSerializer < ActiveModel::Serializer
     object.itemsOrder = object.itemsOrder.map { |item|
       item.merge(RiotStatic.item(item['itemId'], I18n.locale).slice('name', 'plaintext', 'gold'))
     }
+  end
+
+  def championData
+    RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
   end
 end

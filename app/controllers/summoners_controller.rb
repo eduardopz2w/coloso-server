@@ -123,21 +123,15 @@ class SummonersController < ApplicationController
 
 
     begin
-      games = RiotApi.getSummonerGameCurrent(sumUrid)
+      gameCurrent = RiotApi.getSummonerGameCurrent(sumUrid)
 
-      games['participants'] = games['participants'].map { |participant|
-        participant['runes'] = participant['runes'].map { |rune|
-          rune.merge(RiotStatic.rune(rune['runeId'], 'en').slice('name', 'description', 'image'))
-        }
-        participant
-      }
-      return render(json: games)
+      return render(json: gameCurrent, serializer: GamesCurrentSerializer, adapter: :json_api)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
     rescue EntityNotFoundError
       return render(json: { :message => I18n.t('summoner_not_in_game') }, status: :not_found)
-    rescue
-      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
+    #rescue Exception
+    #  return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 end

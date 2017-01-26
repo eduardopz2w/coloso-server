@@ -112,16 +112,16 @@ module RiotApi
     game = RiotClient.fetchSummonerGameCurrent(sumUrid)
 
     sumUrids = []
-    game['participants'].each { |participant| sumUrids.push(participant['summonerUrid'])}
+    game[:participants].each { |participant| sumUrids.push(participant['summonerUrid'])}
 
     leagueEntries = self.getSummonersLeagueEntry(sumUrids)
 
-    game['participants'].each do |participant|
+    game[:participants].each do |participant|
       sumUrid = participant['summonerUrid']
 
-      participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerUrid'] == sumUrid }
+      participant[:leagueEntry] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerUrid'] == sumUrid }
     end
 
-    return game
+    return GameCurrent.new(game)
   end
 end

@@ -291,7 +291,7 @@ module RiotClient
         participant
       }
 
-      return gameData
+      return gameData.symbolize_keys
     elsif response.code == 404
       raise EntityNotFoundError
     elsif response.code == 429
