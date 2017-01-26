@@ -1,4 +1,5 @@
 class GamesCurrentSerializer < ActiveModel::Serializer
+  type 'gamesCurrent'
   attributes :gameId, :mapId, :gameMode, :gameType, :gameQueueConfigId, :participants, :observers, :bannedChampions, :gameStartTime, :gameLength, :focusSummonerUrid, :region
 
   def participants
