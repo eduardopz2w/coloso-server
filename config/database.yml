@@ -8,8 +8,8 @@ default: &default
   adapter: mysql2
   host: localhost
   username: root
-  password: 123456
-  database: cena_rails
+  password: <%= ENV['COLOSO_DB_PASSWORD'] %>
+  database: coloso
 
 development:
   <<: *default
@@ -19,7 +19,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: cena_test
+  database: coloso_test
 
 production:
   <<: *default
