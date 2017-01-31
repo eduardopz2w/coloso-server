@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get '/riot-api/summoner/:sumUrid/league/entry', to: 'summoners#leagueEntry'
   get '/riot-api/summoner/:sumUrid/games/recent', to: 'summoners#gamesRecent'
   get '/riot-api/summoner/:sumUrid/games/current', to: 'summoners#gameCurrent'
+  get '/status/android-app', to:'status#android_app'
   resources 'pro_players', path: 'pro-players', only: ['index', 'create', 'destroy']
   resources :pro_builds, path: 'pro-builds', only: ['index', 'show']
 end
