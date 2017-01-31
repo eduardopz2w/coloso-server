@@ -6,3 +6,4 @@ es:
   riot_server_error: 'Error al conectar con los servidores de Riot, por favor intente mas tarde'
   summoner_not_in_game: 'El invocador no esta en juego'
   build_not_found: 'Build no encontrada'
+  update_required: 'Necesitas actualizar la aplicación'
