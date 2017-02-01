@@ -7,7 +7,7 @@
 default: &default
   adapter: mysql2
   host: localhost
-  username: root
+  username: coloso_rails
   password: <%= ENV['COLOSO_DB_PASSWORD'] %>
   database: coloso
 
