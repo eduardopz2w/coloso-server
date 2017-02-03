@@ -8,7 +8,7 @@ class ProPlayersController < ApplicationController
   end
 
   def index
-    proPlayers = ProPlayer.all
+    proPlayers = ProPlayer.all().order('name ASC')
 
     return render json: proPlayers
   end
