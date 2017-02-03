@@ -5,8 +5,8 @@ class StatusController < ApplicationController
     return render(json: {
       :data => {
         :apkVersions => {
-          actual: '1.0.4',
-          min: '1.0.3',
+          actual: Rails.application.config.androidActualApkVersion,
+          min: Rails.application.config.androidMinApkVersion,
         },
       },
     })

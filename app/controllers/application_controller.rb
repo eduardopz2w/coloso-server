@@ -15,12 +15,11 @@ class ApplicationController < ActionController::API
   end
 
   def checkVersion
-    minVersion = '1.0.3'
     requestVersion = request.headers['App-Version']
 
     begin
       requestVersion = Semantic::Version.new(requestVersion)
-      minVersion = Semantic::Version.new(minVersion)
+      minVersion = Semantic::Version.new(Rails.application.config.androidMinApkVersion)
 
       if requestVersion < minVersion
         return render(json: { :message => I18n.t('update_required') }, status: 400)
