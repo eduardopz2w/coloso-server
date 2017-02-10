@@ -18,6 +18,6 @@ module Coloso
     config.api_only = true
     config.i18n.default_locale = 'es'
     config.androidMinApkVersion = '1.0.3'
-    config.androidActualApkVersion = '1.0.5'
+    config.androidActualApkVersion = '1.0.6'
   end
 end
