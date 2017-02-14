@@ -12,14 +12,14 @@
 
 ActiveRecord::Schema.define(version: 20170117201833) do
 
-  create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid", null: false
     t.json     "masteries"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
-  create_table "games_recents", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "games_recents", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid", null: false
     t.string   "region"
     t.json     "games"
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.datetime "updated_at",   null: false
   end
 
-  create_table "league_entries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "league_entries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid", null: false
     t.string   "region"
     t.json     "entries"
@@ -35,14 +35,14 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.datetime "updated_at",   null: false
   end
 
-  create_table "masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid", null: false
     t.json     "pages"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
-  create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.bigint   "matchId"
     t.bigint   "matchCreation"
     t.integer  "spell1Id"
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.index ["pro_summoner_id"], name: "index_pro_builds_on_pro_summoner_id", using: :btree
   end
 
-  create_table "pro_players", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "pro_players", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "name"
     t.string   "imageUrl"
     t.string   "realName"
@@ -70,9 +70,8 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "pro_summoners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "pro_summoners", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid",  null: false
-    t.string   "region"
     t.bigint   "lastCheck"
     t.integer  "pro_player_id"
     t.datetime "created_at",    null: false
@@ -80,14 +79,14 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.index ["pro_player_id"], name: "index_pro_summoners_on_pro_player_id", using: :btree
   end
 
-  create_table "runes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "runes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid", null: false
     t.json     "pages"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
-  create_table "stats_summaries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "stats_summaries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "summonerUrid",        null: false
     t.string   "season"
     t.json     "playerStatSummaries"
@@ -95,7 +94,7 @@ ActiveRecord::Schema.define(version: 20170117201833) do
     t.datetime "updated_at",          null: false
   end
 
-  create_table "summoners", primary_key: "urid", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+  create_table "summoners", primary_key: "urid", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
     t.string   "name"
     t.integer  "profileIconId"
     t.integer  "summonerLevel"
