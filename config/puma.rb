@@ -9,12 +9,16 @@ threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests, default is 3000.
 #
-port        ENV.fetch("PORT") { 3000 }
+#port        ENV.fetch("PORT") { 3000 }
 
 # Specifies the `environment` that Puma will run in.
 #
 environment ENV.fetch("RAILS_ENV") { "development" }
 
+app_dir = File.expand_path("../..", __FILE__)
+shared_dir = "#{app_dir}/shared"
+
+bind "unix://#{shared_dir}/puma.sock"
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
 # the concurrency of the application would be max `threads` * `workers`.
