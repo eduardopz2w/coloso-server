@@ -6,14 +6,13 @@
 #
 default: &default
   adapter: mysql2
-  host: localhost
-  username: coloso_rails
-  password: <%= ENV['COLOSO_DB_PASSWORD'] %>
+  host: db
+  username: coloso 
+  password: <%= ENV['COLOSO_MYSQL_PASSWORD'] %>
   database: coloso
 
 development:
   <<: *default
-  username: root
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
