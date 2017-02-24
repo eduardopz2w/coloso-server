@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'http'
+gem 'dotenv-rails'
 gem 'mysql2', '~> 0.4.4'
 gem 'will_paginate', '~> 3.1.0'
 gem 'active_model_serializers', '~> 0.10.0'
