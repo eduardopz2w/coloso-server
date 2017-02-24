@@ -6,8 +6,8 @@
 #
 default: &default
   adapter: mysql2
-  host: localhost
-  username: coloso 
+  host: <%= ENV['COLOSO_MYSQL_HOST'] %>
+  username: <%= ENV['COLOSO_MYSQL_USERNAME'] %>
   password: <%= ENV['COLOSO_MYSQL_PASSWORD'] %>
   database: coloso
 
