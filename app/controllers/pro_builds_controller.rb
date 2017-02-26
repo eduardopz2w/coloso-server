@@ -23,6 +23,10 @@ class ProBuildsController < ApplicationController
       end
     end
 
+    if params[:ids]
+      query = query.where(id: params[:ids].split(','))
+    end
+
     proBuilds = query.includes(:pro_summoner => :pro_player).order('matchCreation DESC').paginate(:page => pageNumber, :per_page => pageSize)
 
     return render json: proBuilds, meta: pagination_dict(proBuilds), include: '**', fields: { proBuilds: [:id, :matchCreation, :region, :spell1Id, :spell2Id, :championId, :championData, :stats, :pro_summoner]}
