@@ -124,4 +124,16 @@ module RiotApi
 
     return GameCurrent.new(game)
   end
+
+  def self.getMatch(matchUrid)
+      match = RiotCache.findMatch(matchUrid)
+
+      if match
+        return match
+      else
+        matchData = RiotClient.fetchMatch(matchUrid)
+        match = RiotCache.saveMatch(matchData)
+        return match
+      end
+  end
 end

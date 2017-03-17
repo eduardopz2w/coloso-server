@@ -105,7 +105,7 @@ module RiotClient
           end
 
         end
-        
+
         groupPages.push({
           'id' => page['id'],
           'name' => page['name'],
@@ -292,6 +292,46 @@ module RiotClient
       }
 
       return gameData.symbolize_keys
+    elsif response.code == 404
+      raise EntityNotFoundError
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
+
+  def self.fetchMatch(matchUrid)
+    region = URID.GetRegion(matchUrid)
+    matchId = URID.GetId(matchUrid)
+
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v2.2/match/#{matchId}"
+    response = HTTP.get(url, :params => { :api_key => API_KEY})
+
+
+    if response.code == 200
+      jsonResponse = response.parse
+
+      participants = jsonResponse['participants'].map { |participant|
+        summonerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
+        summonerData['summonerUrid'] = URID.Generate(summonerData['summonerId'], jsonResponse['region'])
+        summonerData.delete('summonerId')
+        participant['summonerData'] = summonerData
+        participant
+      }
+
+      return {
+        :matchUrid => matchUrid,
+        :queueType => jsonResponse['queueType'],
+        :region => jsonResponse['region'],
+        :mapId => jsonResponse['mapId'],
+        :matchCreation => jsonResponse['matchCreation'],
+        :matchMode => jsonResponse['matchMode'],
+        :matchDuration => jsonResponse['matchDuration'],
+        :matchType => jsonResponse['matchType'],
+        :participants => participants,
+        :teams => jsonResponse['teams'],
+      }
     elsif response.code == 404
       raise EntityNotFoundError
     elsif response.code == 429

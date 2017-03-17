@@ -198,4 +198,24 @@ module RiotCache
       return GamesRecent.create(gamesData)
     end
   end
+
+  def self.findMatch(matchUrid)
+    match = Match.find_by(:matchUrid => matchUrid)
+
+    if match
+      return match
+    end
+
+    return false
+  end
+
+  def self.saveMatch(matchData)
+    match = Match.find_by(:matchUrid => matchData[:matchUrid])
+
+    if match
+      return match
+    else
+      return Match.create(matchData)
+    end
+  end
 end
