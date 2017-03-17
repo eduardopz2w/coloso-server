@@ -42,8 +42,7 @@ ActiveRecord::Schema.define(version: 20170317163551) do
     t.datetime "updated_at",   null: false
   end
 
-  create_table "matches", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
-    t.string   "matchUrid",     null: false
+  create_table "matches", primary_key: "matchUrid", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
     t.string   "queueType"
     t.string   "region"
     t.integer  "mapId"
@@ -58,7 +57,7 @@ ActiveRecord::Schema.define(version: 20170317163551) do
   end
 
   create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
-    t.string   "matchUrid"
+    t.string   "matchUrid",                 limit: 100
     t.bigint   "matchCreation"
     t.integer  "spell1Id"
     t.integer  "spell2Id"
@@ -71,8 +70,8 @@ ActiveRecord::Schema.define(version: 20170317163551) do
     t.json     "itemsOrder"
     t.json     "skillsOrder"
     t.integer  "pro_summoner_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.index ["pro_summoner_id"], name: "index_pro_builds_on_pro_summoner_id", using: :btree
   end
 
