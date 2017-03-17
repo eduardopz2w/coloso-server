@@ -58,7 +58,7 @@ ActiveRecord::Schema.define(version: 20170317163551) do
   end
 
   create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
-    t.bigint   "matchId"
+    t.string   "matchUrid"
     t.bigint   "matchCreation"
     t.integer  "spell1Id"
     t.integer  "spell2Id"

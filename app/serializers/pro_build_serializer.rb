@@ -1,6 +1,6 @@
 class ProBuildSerializer < ActiveModel::Serializer
   attributes :id,
-    :matchId,
+    :matchUrid,
     :matchCreation,
     :region,
     :spell1Id,
