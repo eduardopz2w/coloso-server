@@ -1,7 +1,7 @@
 class CreateProBuilds < ActiveRecord::Migration[5.0]
   def change
     create_table :pro_builds do |t|
-      t.integer :matchId, :limit => 8
+      t.string :matchUrid
       t.integer :matchCreation, :limit => 8
       t.integer :spell1Id
       t.integer :spell2Id
