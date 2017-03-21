@@ -1,0 +1,2 @@
+class StatsRanked < ApplicationRecord
+end

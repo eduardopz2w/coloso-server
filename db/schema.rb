@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170317163551) do
+ActiveRecord::Schema.define(version: 20170321024259) do
 
   create_table "champions_masteries", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
     t.string   "summonerUrid", null: false
@@ -96,6 +96,13 @@ ActiveRecord::Schema.define(version: 20170317163551) do
   create_table "runes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
     t.string   "summonerUrid", null: false
     t.json     "pages"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  create_table "stats_rankeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
+    t.string   "summonerUrid", null: false
+    t.json     "champions"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end

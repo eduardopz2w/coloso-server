@@ -196,6 +196,29 @@ module RiotClient
     end
   end
 
+  def self.fetchSummonerStatsRanked(sumUrid)
+    region = URID.GetRegion(sumUrid)
+    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/ranked"
+    response = HTTP.get(url, :params => { :api_key => API_KEY })
+
+    if response.code == 200
+      return {
+        :summonerUrid => sumUrid,
+        :champions => response.parse['champions'],
+      }
+
+    elsif response.code == 404
+      return {
+        :summonerUrid => sumUrid,
+        :champions => [],
+      }
+    elsif response.code == 429
+      raise RiotLimitReached
+    else
+      raise RiotServerError
+    end
+  end
+
   def self.fetchSummonersLeagueEntries(sumUrids)
     region = URID.GetRegion(sumUrids[0])
     sumIds = sumUrids.map { |sumUrid| URID.GetId(sumUrid) }
