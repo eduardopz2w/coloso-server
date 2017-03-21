@@ -72,6 +72,18 @@ module RiotApi
       end
   end
 
+  def self.getSummonerStatsRanked(sumUrid)
+      stats = RiotCache.findSummonerStatsRanked(sumUrid)
+
+      if stats
+        return stats
+      else
+        statsData = RiotClient.fetchSummonerStatsRanked(sumUrid)
+        stats = RiotCache.saveSummonerStatsRanked(statsData)
+        return stats
+      end
+  end
+
   def self.getSummonerLeagueEntry(sumUrid)
       leagueEntries = RiotCache.findSummonersLeagueEntries([sumUrid])
 
@@ -112,12 +124,34 @@ module RiotApi
     game = RiotClient.fetchSummonerGameCurrent(sumUrid)
 
     sumUrids = []
+    statsRanked = []
+
     game[:participants].each { |participant| sumUrids.push(participant['summonerUrid'])}
 
     leagueEntries = self.getSummonersLeagueEntry(sumUrids)
 
+    sumUrids.each{ |urid|
+      begin
+        sumStats = self.getSummonerStatsRanked(urid)
+        statsRanked.push(sumStats)
+      rescue
+        # FetchError
+      end
+    }
+
     game[:participants].each do |participant|
       sumUrid = participant['summonerUrid']
+      participantRankedStats = statsRanked.find{ |stat|  stat[:summonerUrid] == sumUrid }
+
+      if participantRankedStats
+        championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
+
+        puts championStats
+
+        if championStats
+          participant[:championRankedStats] = championStats['stats']
+        end
+      end
 
       participant[:leagueEntry] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerUrid'] == sumUrid }
     end

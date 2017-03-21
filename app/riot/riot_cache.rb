@@ -143,6 +143,28 @@ module RiotCache
     end
   end
 
+  def self.findSummonerStatsRanked(sumUrid, cacheMinutes = 500)
+    stats = StatsRanked.find_by(:summonerUrid => sumUrid)
+
+    if stats and self.isOutDated(stats.updated_at, cacheMinutes)
+      stats = false
+    end
+
+    return stats
+  end
+
+  def self.saveSummonerStatsRanked(statsData)
+    stats = StatsRanked.find_by(:summonerUrid => statsData[:summonerUrid])
+
+    if stats
+      stats.update(statsData.slice(:champions))
+      stats.touch
+      return stats
+    else
+      return StatsRanked.create(statsData)
+    end
+  end
+
   def self.findSummonersLeagueEntries(sumUrids, cacheMinutes = 5)
     leagueEntries = LeagueEntry.where(:summonerUrid => sumUrids)
 
