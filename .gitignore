@@ -22,3 +22,4 @@
 
 #dot env
 .env.*
+.env

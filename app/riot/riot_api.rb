@@ -146,8 +146,6 @@ module RiotApi
       if participantRankedStats
         championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
 
-        puts championStats
-
         if championStats
           participant[:championRankedStats] = championStats['stats']
         end
