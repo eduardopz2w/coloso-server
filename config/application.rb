@@ -16,7 +16,7 @@ module Coloso
     config.autoload_paths << "#{Rails.root}/app/errors"
     config.autoload_paths << "#{Rails.root}/app/riot"
     config.api_only = true
-    config.i18n.default_locale = 'es'
+    config.i18n.default_locale = 'en'
     config.androidMinApkVersion = ENV['COLOSO_MIN_APK_VERSION']
     config.androidActualApkVersion = ENV['COLOSO_ACTUAL_APK_VERSION']
   end

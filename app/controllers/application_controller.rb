@@ -5,12 +5,10 @@ class ApplicationController < ActionController::API
   before_action :checkVersion
 
   def setLocale
-    locale = request.headers['Accept-Language']
+    requestLocale = request.headers['Accept-Language']
 
-    if locale == 'en' || locale == 'es'
-      I18n.locale = locale
-    else
-      I18n.locale = 'es'
+    if requestLocale == 'en'
+      I18n.locale = requestLocale
     end
   end
 

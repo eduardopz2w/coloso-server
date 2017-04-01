@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'rails_admin'
 gem 'http'
 gem 'dotenv-rails'
 gem 'mysql2', '~> 0.4.4'

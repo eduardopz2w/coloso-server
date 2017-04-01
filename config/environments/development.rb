@@ -8,7 +8,6 @@ Rails.application.configure do
 
 
   config.debug_exception_response_format = :default
-  config.debug_exception_response_format = :api
 
   # Do not eager load code on boot.
   config.eager_load = false
