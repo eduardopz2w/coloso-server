@@ -39,4 +39,30 @@ RailsAdmin.config do |config|
     # history_index
     # history_show
   end
+
+  config.model 'ProSummoner' do
+    object_label_method do
+      :summonerUrid
+    end
+
+    list do
+      include_all_fields
+      field :lastCheck do
+        pretty_value do
+          daysDiff = (DateTime.now - Time.at(value / 1000).to_datetime)
+          hoursDiff = daysDiff * 24
+          minDiff = hoursDiff * 60
+
+
+          if daysDiff >= 1
+            "Hace #{daysDiff.to_i} dias"
+          elsif hoursDiff >= 1
+            "Hace #{hoursDiff.to_i} horas"
+          else
+            "Hace #{minDiff.to_i} minutos"
+          end
+        end
+      end
+    end
+  end
 end
