@@ -1,4 +1,3 @@
-# TODO: Add riot server error
 class SummonersController < ApplicationController
   def findByName
     region = params[:region]

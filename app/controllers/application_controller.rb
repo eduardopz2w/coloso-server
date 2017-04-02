@@ -1,6 +1,6 @@
 require 'semantic'
 
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
   before_action :setLocale
   before_action :checkVersion
 
