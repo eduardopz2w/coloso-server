@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   def setLocale
     requestLocale = request.headers['Accept-Language']
 
-    if requestLocale == 'es'
+    if requestLocale == 'es' || requestLocale == 'en'
       I18n.locale = requestLocale
     end
   end
