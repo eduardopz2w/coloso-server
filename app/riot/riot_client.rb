@@ -23,6 +23,8 @@ def regionToPlatform(region)
     return 'oc1'
   elsif region == 'RU'
     return 'ru'
+  elsif region == 'TR'
+    return 'tr1'
   end
 end
 
