@@ -72,6 +72,8 @@ class SummonersController < ApplicationController
       return render(json: masteries)
     rescue RiotLimitReached
       return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
+    rescue
+      return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
     end
   end
 
