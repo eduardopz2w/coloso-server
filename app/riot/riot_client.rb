@@ -43,7 +43,7 @@ module RiotClient
         :name => jsonData['name'],
         :summonerLevel => jsonData['summonerLevel'],
         :profileIconId => jsonData['profileIconId'],
-        :region => region,
+        :region => region.upcase,
       }
 
     elsif response.code == 404
@@ -69,7 +69,7 @@ module RiotClient
         :name => jsonData['name'],
         :summonerLevel => jsonData['summonerLevel'],
         :profileIconId => jsonData['profileIconId'],
-        :region => region,
+        :region => region.upcase,
       }
 
     elsif response.code == 404
