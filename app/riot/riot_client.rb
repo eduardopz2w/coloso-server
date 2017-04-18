@@ -151,8 +151,8 @@ module RiotClient
 
   def self.fetchSummonerChampionsMastery(sumUrid)
     region = URID.GetRegion(sumUrid)
-    platform = regionToPlatform(region)
-    url = "https://#{region.downcase}.api.pvp.net/championmastery/location/#{platform}/player/#{URID.GetId(sumUrid)}/topchampions"
+
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY, :count => 200 })
 
     if response.code == 200
