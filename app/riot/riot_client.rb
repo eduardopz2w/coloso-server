@@ -3,6 +3,8 @@ require 'http'
 API_KEY = ENV['RIOT_API_KEY']
 
 def regionToPlatform(region)
+  region = region.upcase
+
   if region == 'BR'
     return 'br1'
   elsif region == 'EUNE'
@@ -30,11 +32,11 @@ end
 
 module RiotClient
   def self.fetchSummonerByName(sumName, region)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/by-name/#{sumName}"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/summoner/v3/summoners/by-name/#{sumName}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
-      jsonData = response.parse.values[0]
+      jsonData = response.parse
 
       return {
         :urid => URID.Generate(jsonData['id'], region),
@@ -56,11 +58,11 @@ module RiotClient
   def self.fetchSummonerByUrid(urid)
     region = URID.GetRegion(urid)
     sumId = URID.GetId(urid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region}/v1.4/summoner/#{sumId}"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/summoner/v3/summoners/#{sumId}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
-      jsonData = response.parse.values[0]
+      jsonData = response.parse
 
       return {
         :urid => urid,
@@ -81,11 +83,11 @@ module RiotClient
 
   def self.fetchSummonerRunes(sumUrid)
     region = URID.GetRegion(sumUrid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/#{URID.GetId(sumUrid)}/runes"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/runes/by-summoner/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
-      jsonData = response.parse.values[0]
+      jsonData = response.parse
       groupPages = []
 
       jsonData['pages'].each do |page|
@@ -129,11 +131,11 @@ module RiotClient
 
   def self.fetchSummonerMasteries(sumUrid)
     region = URID.GetRegion(sumUrid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.4/summoner/#{URID.GetId(sumUrid)}/masteries"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/masteries/by-summoner/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
-      jsonData = response.parse.values[0]
+      jsonData = response.parse
 
       return {
         :summonerUrid => sumUrid,
@@ -151,8 +153,8 @@ module RiotClient
 
   def self.fetchSummonerChampionsMastery(sumUrid)
     region = URID.GetRegion(sumUrid)
-    platform = regionToPlatform(region)
-    url = "https://#{region.downcase}.api.pvp.net/championmastery/location/#{platform}/player/#{URID.GetId(sumUrid)}/topchampions"
+
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY, :count => 200 })
 
     if response.code == 200
@@ -175,7 +177,7 @@ module RiotClient
 
   def self.fetchSummonerStatsSummary(sumUrid, season = 'SEASON2017')
     region = URID.GetRegion(sumUrid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/summary"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/summary"
     response = HTTP.get(url, :params => { :api_key => API_KEY, :season => season })
 
     if response.code == 200
@@ -200,7 +202,7 @@ module RiotClient
 
   def self.fetchSummonerStatsRanked(sumUrid)
     region = URID.GetRegion(sumUrid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/ranked"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/ranked"
     response = HTTP.get(url, :params => { :api_key => API_KEY })
 
     if response.code == 200
@@ -225,7 +227,7 @@ module RiotClient
     region = URID.GetRegion(sumUrids[0])
     sumIds = sumUrids.map { |sumUrid| URID.GetId(sumUrid) }
 
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
@@ -267,7 +269,7 @@ module RiotClient
 
   def self.fetchSummonerGamesRecent(sumUrid)
     region = URID.GetRegion(sumUrid)
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v1.3/game/by-summoner/#{URID.GetId(sumUrid)}/recent"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/game/by-summoner/#{URID.GetId(sumUrid)}/recent"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
@@ -300,7 +302,7 @@ module RiotClient
   def self.fetchSummonerGameCurrent(sumUrid)
     region = URID.GetRegion(sumUrid)
     platform = regionToPlatform(region)
-    url = "https://#{region.downcase}.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumUrid)}"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumUrid)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
@@ -330,7 +332,7 @@ module RiotClient
     region = URID.GetRegion(matchUrid)
     matchId = URID.GetId(matchUrid)
 
-    url = "https://#{region.downcase}.api.pvp.net/api/lol/#{region.downcase}/v2.2/match/#{matchId}"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v2.2/match/#{matchId}"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
 
