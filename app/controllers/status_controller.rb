@@ -1,6 +1,4 @@
 class StatusController < ApplicationController
-  skip_before_action :checkVersion
-
   def android_app
     return render(json: {
       :data => {
