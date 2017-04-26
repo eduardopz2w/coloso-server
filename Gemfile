@@ -7,6 +7,7 @@ end
 
 gem 'rails_admin'
 gem 'http'
+gem 'rack-cors'
 gem 'dotenv-rails'
 gem 'mysql2', '~> 0.4.4'
 gem 'will_paginate', '~> 3.1.0'
