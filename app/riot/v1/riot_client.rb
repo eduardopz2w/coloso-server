@@ -40,7 +40,7 @@ module V1
         jsonData = response.parse
 
         return {
-          :urid => URID.Generate(jsonData['id'], region),
+          :id => URID.Generate(jsonData['id'], region),
           :name => jsonData['name'],
           :summonerLevel => jsonData['summonerLevel'],
           :profileIconId => jsonData['profileIconId'],
@@ -66,7 +66,7 @@ module V1
         jsonData = response.parse
 
         return {
-          :urid => urid,
+          :id => urid,
           :name => jsonData['name'],
           :summonerLevel => jsonData['summonerLevel'],
           :profileIconId => jsonData['profileIconId'],
@@ -82,9 +82,9 @@ module V1
       end
     end
 
-    def self.fetchSummonerRunes(sumUrid)
-      region = URID.GetRegion(sumUrid)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/runes/by-summoner/#{URID.GetId(sumUrid)}"
+    def self.fetchSummonerRunes(sumId)
+      region = URID.GetRegion(sumId)
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/runes/by-summoner/#{URID.GetId(sumId)}"
       response = HTTP.get(url, :params => { :api_key => API_KEY })
 
       if response.code == 200
@@ -119,7 +119,7 @@ module V1
           })
         end
 
-        return { 'summonerUrid' => sumUrid, 'pages' => groupPages}
+        return { 'summonerId' => sumId, 'pages' => groupPages}
 
       elsif response.code == 404
         raise EntityNotFoundError
@@ -130,16 +130,16 @@ module V1
       end
     end
 
-    def self.fetchSummonerMasteries(sumUrid)
-      region = URID.GetRegion(sumUrid)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/masteries/by-summoner/#{URID.GetId(sumUrid)}"
+    def self.fetchSummonerMasteries(sumId)
+      region = URID.GetRegion(sumId)
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/platform/v3/masteries/by-summoner/#{URID.GetId(sumId)}"
       response = HTTP.get(url, :params => { :api_key => API_KEY })
 
       if response.code == 200
         jsonData = response.parse
 
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :pages => jsonData['pages'],
         }
 
@@ -152,21 +152,21 @@ module V1
       end
     end
 
-    def self.fetchSummonerChampionsMastery(sumUrid)
-      region = URID.GetRegion(sumUrid)
+    def self.fetchSummonerChampionsMastery(sumId)
+      region = URID.GetRegion(sumId)
 
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/#{URID.GetId(sumUrid)}"
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/champion-mastery/v3/champion-masteries/by-summoner/#{URID.GetId(sumId)}"
       response = HTTP.get(url, :params => { :api_key => API_KEY, :count => 200 })
 
       if response.code == 200
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :masteries => response.parse,
         }
 
       elsif response.code == 404
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :masteries => [],
         }
       elsif response.code == 429
@@ -176,21 +176,21 @@ module V1
       end
     end
 
-    def self.fetchSummonerStatsSummary(sumUrid, season = 'SEASON2017')
-      region = URID.GetRegion(sumUrid)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/summary"
+    def self.fetchSummonerStatsSummary(sumId, season = 'SEASON2017')
+      region = URID.GetRegion(sumId)
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumId)}/summary"
       response = HTTP.get(url, :params => { :api_key => API_KEY, :season => season })
 
       if response.code == 200
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :season => season,
           :playerStatSummaries => response.parse['playerStatSummaries'],
         }
 
       elsif response.code == 404
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :season => season,
           :playerStatSummaries => [],
         }
@@ -201,20 +201,20 @@ module V1
       end
     end
 
-    def self.fetchSummonerStatsRanked(sumUrid)
-      region = URID.GetRegion(sumUrid)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumUrid)}/ranked"
+    def self.fetchSummonerStatsRanked(sumId)
+      region = URID.GetRegion(sumId)
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/stats/by-summoner/#{URID.GetId(sumId)}/ranked"
       response = HTTP.get(url, :params => { :api_key => API_KEY })
 
       if response.code == 200
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :champions => response.parse['champions'],
         }
 
       elsif response.code == 404
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :champions => [],
         }
       elsif response.code == 429
@@ -226,7 +226,7 @@ module V1
 
     def self.fetchSummonersLeagueEntries(sumUrids)
       region = URID.GetRegion(sumUrids[0])
-      sumIds = sumUrids.map { |sumUrid| URID.GetId(sumUrid) }
+      sumIds = sumUrids.map { |sumId| URID.GetId(sumId) }
 
       url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v2.5/league/by-summoner/#{sumIds.join(',')}/entry"
       response = HTTP.get(url, :params => { :api_key => API_KEY})
@@ -238,12 +238,12 @@ module V1
         sumIds.each do |sumId|
           if jsonResponse.has_key?(sumId.to_s)
             leagueEntries.push(
-              :summonerUrid => URID.Generate(sumId, region),
+              :summonerId => URID.Generate(sumId, region),
               :entries => jsonResponse[sumId.to_s],
             )
           else
             leagueEntries.push(
-              :summonerUrid => URID.Generate(sumId, region),
+              :summonerId => URID.Generate(sumId, region),
               :entries => [],
             )
           end
@@ -255,7 +255,7 @@ module V1
 
         sumIds.each do |sumId|
           leagueEntries.push({
-              :summonerUrid => URID.Generate(sumId, region),
+              :summonerId => URID.Generate(sumId, region),
               :entries => [],
           })
         end
@@ -268,9 +268,9 @@ module V1
       end
     end
 
-    def self.fetchSummonerGamesRecent(sumUrid)
-      region = URID.GetRegion(sumUrid)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/game/by-summoner/#{URID.GetId(sumUrid)}/recent"
+    def self.fetchSummonerGamesRecent(sumId)
+      region = URID.GetRegion(sumId)
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v1.3/game/by-summoner/#{URID.GetId(sumId)}/recent"
       response = HTTP.get(url, :params => { :api_key => API_KEY})
 
       if response.code == 200
@@ -278,19 +278,18 @@ module V1
 
         games = jsonResponse['games'].each { |game|
           game['fellowPlayers'] = game['fellowPlayers'].each { |player|
-            player['summonerUrid'] = URID.Generate(player['summonerId'], region)
-            player.delete('summonerId')
+            player['summonerId'] = URID.Generate(player['summonerId'], region)
             player
           }
           game
         }
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :games => games,
         }
       elsif response.code == 404
         return {
-          :summonerUrid => sumUrid,
+          :summonerId => sumId,
           :games => [],
         }
       elsif response.code == 429
@@ -300,22 +299,20 @@ module V1
       end
     end
 
-    def self.fetchSummonerGameCurrent(sumUrid)
-      region = URID.GetRegion(sumUrid)
+    def self.fetchSummonerGameCurrent(sumId)
+      region = URID.GetRegion(sumId)
       platform = regionToPlatform(region)
-      url = "https://#{regionToPlatform(region)}.api.riotgames.com/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumUrid)}"
+      url = "https://#{regionToPlatform(region)}.api.riotgames.com/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumId)}"
       response = HTTP.get(url, :params => { :api_key => API_KEY})
 
       if response.code == 200
         jsonResponse = response.parse
 
         gameData = jsonResponse
-        gameData['focusSummonerUrid'] = sumUrid
-        gameData['region'] = URID.GetRegion(sumUrid)
+        gameData['region'] = URID.GetRegion(sumId)
 
         gameData['participants'] = gameData['participants'].map { |participant|
-          participant['summonerUrid'] = URID.Generate(participant['summonerId'], region)
-          participant.delete('summonerId')
+          participant['summonerId'] = URID.Generate(participant['summonerId'], region)
           participant
         }
 
@@ -336,20 +333,18 @@ module V1
       url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v2.2/match/#{matchId}"
       response = HTTP.get(url, :params => { :api_key => API_KEY})
 
-
       if response.code == 200
         jsonResponse = response.parse
 
         participants = jsonResponse['participants'].map { |participant|
           summonerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
-          summonerData['summonerUrid'] = URID.Generate(summonerData['summonerId'], jsonResponse['region'])
-          summonerData.delete('summonerId')
+          summonerData['summonerId'] = URID.Generate(summonerData['summonerId'], jsonResponse['region'])
           participant['summonerData'] = summonerData
           participant
         }
 
         return {
-          :matchUrid => matchUrid,
+          :id => matchUrid,
           :queueType => jsonResponse['queueType'],
           :region => jsonResponse['region'],
           :mapId => jsonResponse['mapId'],

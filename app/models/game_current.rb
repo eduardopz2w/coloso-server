@@ -1,6 +1,6 @@
 class GameCurrent
   alias :read_attribute_for_serialization :send
-  attr_accessor :id, :gameId, :mapId, :gameMode, :gameType, :gameQueueConfigId, :participants, :observers, :platformId, :bannedChampions, :gameStartTime, :gameLength, :focusSummonerUrid, :region
+  attr_accessor :id, :gameId, :mapId, :gameMode, :gameType, :gameQueueConfigId, :participants, :observers, :platformId, :bannedChampions, :gameStartTime, :gameLength, :region
 
   def initialize(attributes)
     @gameId = attributes[:gameId]
@@ -15,7 +15,6 @@ class GameCurrent
     @bannedChampions = attributes[:bannedChampions]
     @gameStartTime = attributes[:gameStartTime]
     @gameLength = attributes[:gameLength]
-    @focusSummonerUrid = attributes[:focusSummonerUrid]
     @region = attributes[:region]
   end
 

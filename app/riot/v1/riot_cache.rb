@@ -10,7 +10,7 @@ module V1
       return false
     end
 
-    def self.findSummonerByName(sumName, region, cacheMinutes = 5)
+    def self.findSummonerByName(sumName, region, cacheMinutes = 60)
       summoner = Summoner.find_by(:name => sumName, :region => region)
 
       if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
@@ -33,8 +33,8 @@ module V1
       end
     end
 
-    def self.findSummonerById(sumUrid, cacheMinutes = 5)
-      summoner = Summoner.find_by(:urid => sumUrid)
+    def self.findSummonerById(sumId, cacheMinutes = 60)
+      summoner = Summoner.find_by(:id => sumId)
 
       if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
         summoner = false
@@ -44,7 +44,7 @@ module V1
     end
 
     def self.saveSummonerById(sumData)
-      sumFound = Summoner.find_by(:urid => sumData[:urid])
+      sumFound = Summoner.find_by(:id => sumData[:id])
 
       if sumFound
         sumFound.update(sumData.slice(:name, :summonerLevel, :profileIconId))
@@ -56,8 +56,8 @@ module V1
       end
     end
 
-    def self.findSummonerRunes(sumUrid, cacheMinutes = 5)
-      runes = Rune.find_by(:summonerUrid => sumUrid)
+    def self.findSummonerRunes(sumId, cacheMinutes = 60)
+      runes = Rune.find_by(:summonerId => sumId)
 
       if runes and self.isOutDated(runes.updated_at, cacheMinutes)
         return false
@@ -67,7 +67,7 @@ module V1
     end
 
     def self.saveSummonerRunes(runesData)
-      runes = Rune.find_by(:summonerUrid => runesData['summonerUrid'])
+      runes = Rune.find_by(:summonerId => runesData['summonerId'])
 
       if runes
         runes.update(runesData.slice('pages'))
@@ -78,8 +78,8 @@ module V1
       end
     end
 
-    def self.findSummonerMasteries(sumUrid, cacheMinutes = 5)
-      masteries = Mastery.find_by(:summonerUrid => sumUrid)
+    def self.findSummonerMasteries(sumId, cacheMinutes = 60)
+      masteries = Mastery.find_by(:summonerId => sumId)
 
       if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
         masteries = false
@@ -89,7 +89,7 @@ module V1
     end
 
     def self.saveSummonerMasteries(masteriesData)
-      masteries = Mastery.find_by(:summonerUrid => masteriesData[:summonerUrid])
+      masteries = Mastery.find_by(:summonerId => masteriesData[:summonerId])
 
       if masteries
         masteries.update(masteriesData.slice(:pages))
@@ -100,8 +100,8 @@ module V1
       end
     end
 
-    def self.findSummonerChampionsMastery(sumUrid, cacheMinutes = 5)
-      masteries = ChampionsMastery.find_by(:summonerUrid => sumUrid)
+    def self.findSummonerChampionsMastery(sumId, cacheMinutes = 60)
+      masteries = ChampionsMastery.find_by(:summonerId => sumId)
 
       if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
         return false
@@ -111,7 +111,7 @@ module V1
     end
 
     def self.saveSummonerChampionsMastery(masteriesData)
-      masteries = ChampionsMastery.find_by(:summonerUrid => masteriesData[:summonerUrid])
+      masteries = ChampionsMastery.find_by(:summonerId => masteriesData[:summonerId])
 
       if masteries
         masteries.update(masteriesData.slice(:masteries))
@@ -122,8 +122,8 @@ module V1
       end
     end
 
-    def self.findSummonerStatsSummary(sumUrid, season, cacheMinutes = 5)
-      stats = StatsSummary.find_by(:summonerUrid => sumUrid, :season => season)
+    def self.findSummonerStatsSummary(sumId, season, cacheMinutes = 60)
+      stats = StatsSummary.find_by(:summonerId => sumId, :season => season)
 
       if stats and self.isOutDated(stats.updated_at, cacheMinutes)
         stats = false
@@ -133,7 +133,7 @@ module V1
     end
 
     def self.saveSummonerStatsSummary(statsData)
-      stats = StatsSummary.find_by(:summonerUrid => statsData[:summonerUrid], :season => statsData[:season])
+      stats = StatsSummary.find_by(:summonerId => statsData[:summonerId], :season => statsData[:season])
 
       if stats
         stats.update(statsData.slice(:playerStatSummaries))
@@ -144,8 +144,8 @@ module V1
       end
     end
 
-    def self.findSummonerStatsRanked(sumUrid, cacheMinutes = 500)
-      stats = StatsRanked.find_by(:summonerUrid => sumUrid)
+    def self.findSummonerStatsRanked(sumId, cacheMinutes = 60)
+      stats = StatsRanked.find_by(:summonerId => sumId)
 
       if stats and self.isOutDated(stats.updated_at, cacheMinutes)
         stats = false
@@ -155,7 +155,7 @@ module V1
     end
 
     def self.saveSummonerStatsRanked(statsData)
-      stats = StatsRanked.find_by(:summonerUrid => statsData[:summonerUrid])
+      stats = StatsRanked.find_by(:summonerId => statsData[:summonerId])
 
       if stats
         stats.update(statsData.slice(:champions))
@@ -166,10 +166,10 @@ module V1
       end
     end
 
-    def self.findSummonersLeagueEntries(sumUrids, cacheMinutes = 5)
-      leagueEntries = LeagueEntry.where(:summonerUrid => sumUrids)
+    def self.findSummonersLeagueEntries(sumIds, cacheMinutes = 30)
+      leagueEntries = LeagueEntry.where(:summonerId => sumIds)
 
-      if leagueEntries.length != sumUrids.length
+      if leagueEntries.length != sumIds.length
         return false
       end
 
@@ -186,7 +186,7 @@ module V1
       entries = []
 
       leagueEntries.each do |leagueEntry|
-        leagueEntryFound = LeagueEntry.find_by(:summonerUrid => leagueEntry[:summonerUrid])
+        leagueEntryFound = LeagueEntry.find_by(:summonerId => leagueEntry[:summonerId])
 
         if leagueEntryFound
           leagueEntryFound.update(leagueEntry.slice(:entries))
@@ -200,8 +200,8 @@ module V1
       return entries
     end
 
-    def self.findSummonerGamesRecent(sumUrid, cacheMinutes = 5)
-      games = GamesRecent.find_by(:summonerUrid => sumUrid)
+    def self.findSummonerGamesRecent(sumId, cacheMinutes = 30)
+      games = GamesRecent.find_by(:summonerId => sumId)
 
       if games and self.isOutDated(games.updated_at, cacheMinutes)
         games = false
@@ -211,7 +211,7 @@ module V1
     end
 
     def self.saveSummonerGamesRecent(gamesData)
-      games = GamesRecent.find_by(:summonerUrid => gamesData[:summonerUrid])
+      games = GamesRecent.find_by(:summonerId => gamesData[:summonerId])
 
       if games
         games.update(gamesData.slice(:games))
@@ -222,8 +222,8 @@ module V1
       end
     end
 
-    def self.findMatch(matchUrid)
-      match = Match.find_by(:matchUrid => matchUrid)
+    def self.findMatch(matchId)
+      match = Match.find_by(:id => matchId)
 
       if match
         return match
@@ -233,7 +233,7 @@ module V1
     end
 
     def self.saveMatch(matchData)
-      match = Match.find_by(:matchUrid => matchData[:matchUrid])
+      match = Match.find_by(:id => matchData[:id])
 
       if match
         return match

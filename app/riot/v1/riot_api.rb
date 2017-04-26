@@ -13,127 +13,127 @@ module V1
         end
     end
 
-    def self.getSummonerById(sumUrid)
-        summoner = RiotCache.findSummonerById(sumUrid)
+    def self.getSummonerById(sumId)
+        summoner = RiotCache.findSummonerById(sumId)
 
         if summoner
           return summoner
         else
-          sumData = RiotClient.fetchSummonerByUrid(sumUrid)
+          sumData = RiotClient.fetchSummonerByUrid(sumId)
           summoner = RiotCache.saveSummonerById(sumData)
           return summoner
         end
     end
 
-    def self.getSummonerRunes(sumUrid)
-        runes = RiotCache.findSummonerRunes(sumUrid)
+    def self.getSummonerRunes(sumId)
+        runes = RiotCache.findSummonerRunes(sumId)
 
         if runes
           return runes
         else
-          runesData = RiotClient.fetchSummonerRunes(sumUrid)
+          runesData = RiotClient.fetchSummonerRunes(sumId)
           runes = RiotCache.saveSummonerRunes(runesData)
           return runes
         end
     end
 
-    def self.getSummonerMasteries(sumUrid)
-        masteries = RiotCache.findSummonerMasteries(sumUrid)
+    def self.getSummonerMasteries(sumId)
+        masteries = RiotCache.findSummonerMasteries(sumId)
 
         if masteries
           return masteries
         else
-          masteriesData = RiotClient.fetchSummonerMasteries(sumUrid)
+          masteriesData = RiotClient.fetchSummonerMasteries(sumId)
           masteries = RiotCache.saveSummonerMasteries(masteriesData)
           return masteries
         end
     end
 
-    def self.getSummonerChampionsMastery(sumUrid)
-        masteries = RiotCache.findSummonerChampionsMastery(sumUrid)
+    def self.getSummonerChampionsMastery(sumId)
+        masteries = RiotCache.findSummonerChampionsMastery(sumId)
 
         if masteries
           return masteries
         else
-          masteriesData = RiotClient.fetchSummonerChampionsMastery(sumUrid)
+          masteriesData = RiotClient.fetchSummonerChampionsMastery(sumId)
           masteries = RiotCache.saveSummonerChampionsMastery(masteriesData)
           return masteries
         end
     end
 
-    def self.getSummonerStatsSummary(sumUrid, season)
-        stats = RiotCache.findSummonerStatsSummary(sumUrid, season)
+    def self.getSummonerStatsSummary(sumId, season)
+        stats = RiotCache.findSummonerStatsSummary(sumId, season)
 
         if stats
           return stats
         else
-          statsData = RiotClient.fetchSummonerStatsSummary(sumUrid, season)
+          statsData = RiotClient.fetchSummonerStatsSummary(sumId, season)
           stats = RiotCache.saveSummonerStatsSummary(statsData)
           return stats
         end
     end
 
-    def self.getSummonerStatsRanked(sumUrid)
-        stats = RiotCache.findSummonerStatsRanked(sumUrid)
+    def self.getSummonerStatsRanked(sumId)
+        stats = RiotCache.findSummonerStatsRanked(sumId)
 
         if stats
           return stats
         else
-          statsData = RiotClient.fetchSummonerStatsRanked(sumUrid)
+          statsData = RiotClient.fetchSummonerStatsRanked(sumId)
           stats = RiotCache.saveSummonerStatsRanked(statsData)
           return stats
         end
     end
 
-    def self.getSummonerLeagueEntry(sumUrid)
-        leagueEntries = RiotCache.findSummonersLeagueEntries([sumUrid])
+    def self.getSummonerLeagueEntry(sumId)
+        leagueEntries = RiotCache.findSummonersLeagueEntries([sumId])
 
         if leagueEntries
           return leagueEntries[0]
         else
-          leagueEntriesData = RiotClient.fetchSummonersLeagueEntries([sumUrid])
+          leagueEntriesData = RiotClient.fetchSummonersLeagueEntries([sumId])
           leagueEntries = RiotCache.saveSummonersLeagueEntries(leagueEntriesData)
           return leagueEntries[0]
         end
     end
 
-    def self.getSummonersLeagueEntry(sumUrids)
-        leagueEntries = RiotCache.findSummonersLeagueEntries(sumUrids)
+    def self.getSummonersLeagueEntry(sumIds)
+        leagueEntries = RiotCache.findSummonersLeagueEntries(sumIds)
 
         if leagueEntries
           return leagueEntries
         else
-          leagueEntriesData = RiotClient.fetchSummonersLeagueEntries(sumUrids)
+          leagueEntriesData = RiotClient.fetchSummonersLeagueEntries(sumIds)
           leagueEntries = RiotCache.saveSummonersLeagueEntries(leagueEntriesData)
           return leagueEntries
         end
     end
 
-    def self.getSummonerGamesRecent(sumUrid)
-        games = RiotCache.findSummonerGamesRecent(sumUrid)
+    def self.getSummonerGamesRecent(sumId)
+        games = RiotCache.findSummonerGamesRecent(sumId)
 
         if games
           return games
         else
-          gamesData = RiotClient.fetchSummonerGamesRecent(sumUrid)
+          gamesData = RiotClient.fetchSummonerGamesRecent(sumId)
           games = RiotCache.saveSummonerGamesRecent(gamesData)
           return games
         end
     end
 
-    def self.getSummonerGameCurrent(sumUrid)
-      game = RiotClient.fetchSummonerGameCurrent(sumUrid)
+    def self.getSummonerGameCurrent(sumId)
+      game = RiotClient.fetchSummonerGameCurrent(sumId)
 
-      sumUrids = []
+      sumIds = []
       statsRanked = []
 
-      game[:participants].each { |participant| sumUrids.push(participant['summonerUrid'])}
+      game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
 
-      leagueEntries = self.getSummonersLeagueEntry(sumUrids)
+      leagueEntries = self.getSummonersLeagueEntry(sumIds)
 
-      sumUrids.each{ |urid|
+      sumIds.each{ |id|
         begin
-          sumStats = self.getSummonerStatsRanked(urid)
+          sumStats = self.getSummonerStatsRanked(id)
           statsRanked.push(sumStats)
         rescue
           # FetchError
@@ -141,8 +141,8 @@ module V1
       }
 
       game[:participants].each do |participant|
-        sumUrid = participant['summonerUrid']
-        participantRankedStats = statsRanked.find{ |stat|  stat[:summonerUrid] == sumUrid }
+        sumId = participant['summonerId']
+        participantRankedStats = statsRanked.find{ |stat|  stat[:summonerId] == sumId }
 
         if participantRankedStats
           championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
@@ -152,7 +152,7 @@ module V1
           end
         end
 
-        participant[:leagueEntry] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerUrid'] == sumUrid }
+        participant[:leagueEntry] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
       end
 
       return GameCurrent.new(game)

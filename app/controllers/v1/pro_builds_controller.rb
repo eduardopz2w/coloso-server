@@ -30,7 +30,7 @@ module V1
 
       proBuilds = query.includes(:pro_summoner => :pro_player).order('matchCreation DESC').paginate(:page => pageNumber, :per_page => pageSize)
 
-      return render(json: proBuilds, meta: pagination_dict(proBuilds), include: '**', fields: { proBuilds: [:id, :matchUrid, :matchCreation, :region, :spell1Id, :spell2Id, :championId, :championData, :stats, :pro_summoner]})
+      return render(json: proBuilds, meta: pagination_dict(proBuilds), include: '**', fields: { proBuilds: [:id, :matchId, :matchCreation, :matchDuration, :region, :spell1Id, :spell2Id, :championId, :championData, :stats, :pro_summoner]})
     end
 
     def show

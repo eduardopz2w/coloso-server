@@ -127,7 +127,7 @@ module V1
       begin
         gameCurrent = RiotApi.getSummonerGameCurrent(sumUrid)
 
-        return render(json: gameCurrent )
+        return render(json: gameCurrent, serializer: GamesCurrentSerializer, focusSummonerUrid: sumUrid )
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
       rescue EntityNotFoundError

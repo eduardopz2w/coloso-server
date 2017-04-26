@@ -42,7 +42,7 @@ RailsAdmin.config do |config|
 
   config.model 'ProSummoner' do
     object_label_method do
-      :summonerUrid
+      :summonerId
     end
 
     list do

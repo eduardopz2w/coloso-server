@@ -32,5 +32,9 @@ module V1
     def championData
       RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
     end
+
+    def matchUrid
+      object.matchId
+    end
   end
 end

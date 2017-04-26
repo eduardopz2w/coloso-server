@@ -17,8 +17,14 @@ module V1
           rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
         }
         participant['championData'] = RiotStatic.champion(participant['championId'], I18n.locale).slice('name', 'title')
+        participant['summonerData']['summonerUrid'] = participant['summonerData']['summonerId']
+        participant['summonerData'].delete('summonerId')
         participant
       }
+    end
+
+    def matchUrid
+      object.id
     end
   end
 end
