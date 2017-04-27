@@ -1,5 +1,7 @@
 class ChangeV2 < ActiveRecord::Migration[5.0]
   def change
+    add_column :summoners, :accountId, :integer
+    add_column :pro_summoners, :accountId, :integer
     rename_column :summoners, :urid, :id
     rename_column :runes, :summonerUrid, :summonerId
     rename_column :masteries, :summonerUrid, :summonerId
@@ -20,6 +22,8 @@ class ChangeV2 < ActiveRecord::Migration[5.0]
   end
 
   def down
+    remove_column :summoners, :accountId
+    remove_column :pro_summoners, :accountId
     rename_column :summoners, :id, :urid
     rename_column :runes, :summonerId, :summonerUrid
     rename_column :masteries, :summonerId, :summonerUrid
