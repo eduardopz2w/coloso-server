@@ -1,4 +1,3 @@
-
 module RiotStatic
   @staticJsons = {
     'en' => {
