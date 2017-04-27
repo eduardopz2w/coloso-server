@@ -1,9 +1,6 @@
 module V1
   class ProBuildSerializer < ActiveModel::Serializer
     attributes :id,
-      :matchUrid,
-      :matchCreation,
-      :region,
       :spell1Id,
       :spell2Id,
       :championId,
@@ -14,6 +11,9 @@ module V1
       :stats,
       :itemsOrder,
       :skillsOrder
+
+    attribute :gameId, key: :matchUrid
+    attribute :gameCreation, key: :matchCreation
 
     has_one :pro_summoner
 
@@ -31,10 +31,6 @@ module V1
 
     def championData
       RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
-    end
-
-    def matchUrid
-      object.matchId
     end
   end
 end

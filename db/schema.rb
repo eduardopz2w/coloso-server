@@ -44,25 +44,28 @@ ActiveRecord::Schema.define(version: 20170426193030) do
 
   create_table "matches", id: :string, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
     t.string   "queueType"
-    t.string   "region"
     t.integer  "mapId"
-    t.bigint   "matchCreation"
-    t.string   "matchMode"
-    t.integer  "matchDuration"
+    t.bigint   "gameCreation"
+    t.string   "gameMode"
+    t.integer  "gameDuration"
     t.string   "matchType"
     t.json     "teams"
     t.json     "participants"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "gameType"
+    t.integer  "seasonId"
+    t.integer  "queueId"
+    t.string   "gameVersion"
+    t.string   "platformId"
   end
 
   create_table "pro_builds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
-    t.bigint   "matchCreation"
+    t.bigint   "gameCreation"
     t.integer  "spell1Id"
     t.integer  "spell2Id"
     t.integer  "championId"
     t.string   "highestAchievedSeasonTier"
-    t.string   "region"
     t.json     "masteries"
     t.json     "runes"
     t.json     "stats"
@@ -71,10 +74,15 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.integer  "pro_summoner_id"
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
-    t.string   "matchId",                   limit: 50
-    t.bigint   "matchDuration"
-    t.string   "season"
-    t.string   "matchVersion"
+    t.string   "gameId",                    limit: 50
+    t.integer  "seasonId"
+    t.integer  "queueId"
+    t.string   "gameVersion"
+    t.string   "platformId"
+    t.string   "gameMode"
+    t.integer  "mapId"
+    t.string   "gameType"
+    t.bigint   "gameDuration"
     t.index ["pro_summoner_id"], name: "index_pro_builds_on_pro_summoner_id", using: :btree
   end
 
@@ -93,7 +101,7 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.integer  "pro_player_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.integer  "accountId"
+    t.bigint   "accountId"
     t.index ["pro_player_id"], name: "index_pro_summoners_on_pro_player_id", using: :btree
   end
 
@@ -104,7 +112,7 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "stats_rankeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1" do |t|
+  create_table "stats_rankeds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin" do |t|
     t.string   "summonerId", null: false
     t.json     "champions"
     t.datetime "created_at", null: false
@@ -126,7 +134,7 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.string   "region"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.integer  "accountId"
+    t.bigint   "accountId"
   end
 
 end

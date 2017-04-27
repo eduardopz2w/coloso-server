@@ -331,30 +331,33 @@ module RiotClient
     region = URID.GetRegion(matchUrid)
     matchId = URID.GetId(matchUrid)
 
-    url = "https://#{regionToPlatform(region)}.api.riotgames.com/api/lol/#{region.downcase}/v2.2/match/#{matchId}"
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/match/v3/matches/#{matchId}"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
 
     if response.code == 200
       jsonResponse = response.parse
 
+      # TODO: Usar current account
       participants = jsonResponse['participants'].map { |participant|
-        summonerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
-        summonerData['summonerId'] = URID.Generate(summonerData['summonerId'], jsonResponse['region'])
-        participant['summonerData'] = summonerData
+        playerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
+        playerData['summonerId'] = URID.Generate(playerData['summonerId'], region)
+        participant['summonerData'] = playerData
         participant
       }
 
       return {
         :id => matchUrid,
-        :queueType => jsonResponse['queueType'],
-        :region => jsonResponse['region'],
+        :seasonId => jsonResponse['seasonId'],
+        :queueId => jsonResponse['queueId'],
+        :gameVersion => jsonResponse['gameVersion'],
+        :platformId => jsonResponse['platformId'],
+        :gameMode => jsonResponse['gameMode'],
         :mapId => jsonResponse['mapId'],
-        :matchCreation => jsonResponse['matchCreation'],
-        :matchMode => jsonResponse['matchMode'],
-        :matchDuration => jsonResponse['matchDuration'],
-        :matchType => jsonResponse['matchType'],
-        :participants => participants,
+        :gameType => jsonResponse['gameType'],
         :teams => jsonResponse['teams'],
+        :participants => participants,
+        :gameDuration => jsonResponse['gameDuration'],
+        :gameCreation => jsonResponse['gameCreation']
       }
     elsif response.code == 404
       raise EntityNotFoundError

@@ -221,8 +221,8 @@ module RiotCache
     end
   end
 
-  def self.findMatch(matchId)
-    match = Match.find_by(:id => matchId)
+  def self.findMatch(matchUrid)
+    match = Match.find_by(:id => matchUrid)
 
     if match
       return match
