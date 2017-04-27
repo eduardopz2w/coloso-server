@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.integer  "pro_player_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.integer  "accountId"
     t.index ["pro_player_id"], name: "index_pro_summoners_on_pro_player_id", using: :btree
   end
 
@@ -125,6 +126,7 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.string   "region"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.integer  "accountId"
   end
 
 end

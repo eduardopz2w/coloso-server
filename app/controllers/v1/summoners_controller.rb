@@ -4,9 +4,8 @@ module V1
       region = params[:region]
       summonerName = params[:summonerName]
 
-
       begin
-        summoner = RiotApi.getSummonerByName(summonerName, region)
+        summoner = RiotApi::Summoner.byName(summonerName, region)
         return render(json: summoner)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -17,12 +16,12 @@ module V1
       end
     end
 
-    def findById
+    def findByUrid
       sumUrid = params[:sumUrid]
 
 
       begin
-        summoner = RiotApi.getSummonerById(sumUrid)
+        summoner = RiotApi::Summoner.byUrid(sumUrid)
         return render(json: summoner)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -37,7 +36,7 @@ module V1
       sumUrid = params[:sumUrid]
 
       begin
-        runes = RiotApi.getSummonerRunes(sumUrid)
+        runes = RiotApi::Summoner.runes(sumUrid)
         return render(json: runes)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -53,7 +52,7 @@ module V1
 
 
       begin
-        masteries = RiotApi.getSummonerMasteries(sumUrid)
+        masteries = RiotApi::Summoner.masteries(sumUrid)
         return render(json: masteries)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -69,7 +68,7 @@ module V1
 
 
       begin
-        masteries = RiotApi.getSummonerChampionsMastery(sumUrid)
+        masteries = RiotApi::Summoner.championsMastery(sumUrid)
         return render(json: masteries)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -84,7 +83,7 @@ module V1
 
 
       begin
-        stats = RiotApi.getSummonerStatsSummary(sumUrid, season)
+        stats = RiotApi::Summoner.statsSummary(sumUrid, season)
         return render(json: stats)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -97,7 +96,7 @@ module V1
       sumUrid = params[:sumUrid]
 
       begin
-        leagueEntry = RiotApi.getSummonerLeagueEntry(sumUrid)
+        leagueEntry = RiotApi::Summoner.leagueEntry(sumUrid)
         return render(json: leagueEntry)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -111,7 +110,7 @@ module V1
 
 
       begin
-        games = RiotApi.getSummonerGamesRecent(sumUrid)
+        games = RiotApi::Summoner.gamesRecent(sumUrid)
         return render(json: games)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
@@ -125,7 +124,7 @@ module V1
 
 
       begin
-        gameCurrent = RiotApi.getSummonerGameCurrent(sumUrid)
+        gameCurrent = RiotApi::Summoner.gameCurrent(sumUrid)
 
         return render(json: gameCurrent, serializer: GamesCurrentSerializer, focusSummonerUrid: sumUrid )
       rescue RiotLimitReached

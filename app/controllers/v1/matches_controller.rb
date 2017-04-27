@@ -4,7 +4,7 @@ module V1
       matchUrid = params[:matchUrid]
 
       begin
-        match = RiotApi.getMatch(matchUrid)
+        match = RiotApi::Match.byUrid(matchUrid)
         return render(json: match)
       rescue RiotLimitReached
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
