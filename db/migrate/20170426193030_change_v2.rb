@@ -11,6 +11,8 @@ class ChangeV2 < ActiveRecord::Migration[5.0]
     rename_column :pro_summoners, :summonerUrid, :summonerId
     add_column :pro_summoners, :accountId, :integer, :limit => 8
     rename_column :stats_rankeds, :summonerUrid, :summonerId
+    remove_column :games_recents, :region
+    remove_column :region, :region
 
     change_table :pro_builds do |t|
       t.rename :matchUrid, :gameId
@@ -52,6 +54,8 @@ class ChangeV2 < ActiveRecord::Migration[5.0]
     rename_column :games_recents, :summonerId, :summonerUrid
     rename_column :pro_summoners, :summonerId, :summonerUrid
     rename_column :stats_rankeds, :summonerId, :summonerUrid
+    add_column :games_recents, :region, :string
+    add_column :region, :region, :string
 
     change_table :pro_builds do |t|
       t.rename :gameId, :matchUrid
