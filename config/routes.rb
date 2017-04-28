@@ -25,7 +25,7 @@ Rails.application.routes.draw do
     match '/summoners/:sumUrid/league/entry', to: 'summoners#leagueEntry', :via => :get
     match '/summoners/:sumUrid/games/recent', to: 'summoners#gamesRecent', :via => :get
     match '/summoners/:sumUrid/games/current', to: 'summoners#gameCurrent', :via => :get
-    match '/matches/:matchUrid', to: 'matches#show', :via => :get
+    match '/games/:matchUrid', to: 'matches#show', :via => :get
     resources :pro_players, path: 'pro-players', only: ['index']
     resources :pro_builds, path: 'pro-builds', only: ['index', 'show']
   end

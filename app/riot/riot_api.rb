@@ -136,11 +136,11 @@ module RiotApi
             championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
 
             if championStats
-              participant[:championRankedStats] = championStats['stats']
+              participant['championRankedStats'] = championStats['stats']
             end
           end
 
-          participant[:leagueEntry] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
+          participant['leagueEntries'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
         end
 
         return GameCurrent.new(game)

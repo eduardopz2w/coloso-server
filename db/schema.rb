@@ -48,12 +48,11 @@ ActiveRecord::Schema.define(version: 20170426193030) do
     t.bigint   "gameCreation"
     t.string   "gameMode"
     t.integer  "gameDuration"
-    t.string   "matchType"
+    t.string   "gameType"
     t.json     "teams"
     t.json     "participants"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
-    t.string   "gameType"
     t.integer  "seasonId"
     t.integer  "queueId"
     t.string   "gameVersion"

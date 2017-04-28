@@ -79,7 +79,7 @@ module V1
 
     def statsSummary
       sumUrid = params[:sumUrid]
-      season = params[:season]
+      season = params[:season] || 'SEASON2017'
 
 
       begin

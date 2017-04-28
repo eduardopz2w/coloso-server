@@ -1,19 +1,26 @@
 module V2
   class ProBuildSerializer < ActiveModel::Serializer
     attributes :id,
-      :matchId,
-      :matchCreation,
-      :region,
+      :gameCreation,
+      :gameId,
+      :seasonId,
+      :queueId,
+      :gameMode,
+      :gameVersion,
+      :platformId,
+      :mapId,
+      :gameType,
+      :gameDuration,
       :spell1Id,
       :spell2Id,
       :championId,
-      :championData,
       :highestAchievedSeasonTier,
       :masteries,
       :runes,
       :stats,
       :itemsOrder,
-      :skillsOrder
+      :skillsOrder,
+      :champion
 
     has_one :pro_summoner
 
@@ -29,7 +36,7 @@ module V2
       }
     end
 
-    def championData
+    def champion
       RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
     end
   end

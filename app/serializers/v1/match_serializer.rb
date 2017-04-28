@@ -15,6 +15,8 @@ module V1
           rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
         }
         participant['championData'] = RiotStatic.champion(participant['championId'], I18n.locale).slice('name', 'title')
+        participant['summonerData'] = participant['summoner']
+        participant.delete('summoner')
         participant['summonerData']['summonerUrid'] = participant['summonerData']['summonerId']
         participant['summonerData'].delete('summonerId')
         participant['stats']['minionsKilled'] = participant['stats']['totalMinionsKilled']

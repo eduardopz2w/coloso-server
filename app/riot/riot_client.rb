@@ -340,7 +340,7 @@ module RiotClient
       participants = jsonResponse['participants'].map { |participant|
         playerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
         playerData['summonerId'] = URID.Generate(playerData['summonerId'], region)
-        participant['summonerData'] = playerData
+        participant['summoner'] = playerData
         participant
       }
 

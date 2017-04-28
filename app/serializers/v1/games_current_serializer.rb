@@ -12,6 +12,8 @@ module V1
         participant['runes'] = participant['runes'].map { |rune|
           rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
         }
+        participant['leagueEntry'] = participant['leagueEntries'] || nil
+        participant.delete('leagueEntries')
         participant['summonerUrid'] = participant['summonerId']
         participant.delete('summonerId')
         participant
