@@ -121,7 +121,7 @@ module RiotApi
 
         sumIds.each{ |id|
           begin
-            sumStats = self.getSummonerStatsRanked(id)
+            sumStats = self.statsRanked(id)
             statsRanked.push(sumStats)
           rescue
             # FetchError

@@ -337,7 +337,6 @@ module RiotClient
     if response.code == 200
       jsonResponse = response.parse
 
-      # TODO: Usar current account
       participants = jsonResponse['participants'].map { |participant|
         playerData = jsonResponse['participantIdentities'].detect { |identity| identity['participantId'] == participant['participantId'] }['player']
         playerData['summonerId'] = URID.Generate(playerData['summonerId'], region)
