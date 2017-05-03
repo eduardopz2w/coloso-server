@@ -140,7 +140,7 @@ module RiotApi
             end
           end
 
-          participant['leagueEntries'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
+          participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
         end
 
         return GameCurrent.new(game)
