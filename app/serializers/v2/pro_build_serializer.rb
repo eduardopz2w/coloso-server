@@ -37,7 +37,12 @@ module V2
     end
 
     def champion
-      RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
+      championData = RiotStatic.champion(object.championId, I18n.locale).slice('name', 'title')
+      return {
+        :id => object.championId,
+        :name => championData['name'],
+        :title => championData['title']
+      }
     end
   end
 end

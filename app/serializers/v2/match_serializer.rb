@@ -1,5 +1,7 @@
 module V2
   class MatchSerializer < ActiveModel::Serializer
+    type 'games'
+
     attributes :id,
       :queueType,
       :mapId,
