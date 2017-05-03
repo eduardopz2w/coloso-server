@@ -40,13 +40,29 @@ RailsAdmin.config do |config|
     # history_show
   end
 
+  config.model 'ProPlayer' do
+    list do
+      include_fields :name, :realName, :role, :pro_summoners
+    end
+
+    edit do
+      include_fields :name, :realName, :role, :pro_summoners
+    end
+  end
+
   config.model 'ProSummoner' do
     object_label_method do
       :summonerId
     end
 
+    edit do
+      include_fields :summonerId, :pro_player
+    end
+
     list do
-      include_all_fields
+      field :summonerId
+      field :accountId
+      field :pro_player
       field :lastCheck do
         pretty_value do
           daysDiff = (DateTime.now - Time.at(value / 1000).to_datetime)
@@ -63,6 +79,8 @@ RailsAdmin.config do |config|
           end
         end
       end
+
     end
   end
+
 end
