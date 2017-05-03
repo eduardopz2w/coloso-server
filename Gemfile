@@ -7,7 +7,9 @@ end
 
 gem 'rails_admin'
 gem 'http'
+gem 'rack-cors'
 gem 'dotenv-rails'
+gem 'versionist'
 gem 'mysql2', '~> 0.4.4'
 gem 'will_paginate', '~> 3.1.0'
 gem 'active_model_serializers', '~> 0.10.0'

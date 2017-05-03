@@ -16,5 +16,12 @@ module Coloso
     config.i18n.default_locale = 'en'
     config.androidMinApkVersion = ENV['COLOSO_MIN_APK_VERSION']
     config.androidActualApkVersion = ENV['COLOSO_ACTUAL_APK_VERSION']
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :options]
+      end
+    end
   end
 end
