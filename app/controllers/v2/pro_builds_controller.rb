@@ -30,7 +30,7 @@ module V2
 
       proBuilds = query.includes(:pro_summoner => :pro_player).order('(gameCreation + (gameDuration * 1000)) DESC').paginate(:page => pageNumber, :per_page => pageSize)
 
-      return render(json: proBuilds, meta: pagination_dict(proBuilds), include: '**')
+      return render(json: proBuilds, meta: pagination_dict(proBuilds), include: '**', fields: [:id, :gameCreation, :gameDuration, :spell1Id, :spell2Id, :stats, :champion])
     end
   end
 end
