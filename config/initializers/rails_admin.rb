@@ -1,3 +1,18 @@
+def timeAgo(milliseconds)
+  daysDiff = (DateTime.now - Time.at(milliseconds / 1000).to_datetime)
+  hoursDiff = daysDiff * 24
+  minDiff = hoursDiff * 60
+
+
+  if daysDiff >= 1
+    "Hace #{daysDiff.to_i} dias"
+  elsif hoursDiff >= 1
+    "Hace #{hoursDiff.to_i} horas"
+  else
+    "Hace #{minDiff.to_i} minutos"
+  end
+end
+
 RailsAdmin.config do |config|
 
   ### Popular gems integration
@@ -65,21 +80,26 @@ RailsAdmin.config do |config|
       field :pro_player
       field :lastCheck do
         pretty_value do
-          daysDiff = (DateTime.now - Time.at(value / 1000).to_datetime)
-          hoursDiff = daysDiff * 24
-          minDiff = hoursDiff * 60
+          timeAgo(value)
+        end
 
-
-          if daysDiff >= 1
-            "Hace #{daysDiff.to_i} dias"
-          elsif hoursDiff >= 1
-            "Hace #{hoursDiff.to_i} horas"
-          else
-            "Hace #{minDiff.to_i} minutos"
-          end
+        formatted_value do
+          timeAgo(value)
         end
       end
+    end
 
+    show do
+      include_fields :summonerId, :accountId, :lastCheck, :pro_player
+      field :lastCheck do
+        pretty_value do
+          timeAgo(value)
+        end
+
+        formatted_value do
+          timeAgo(value)
+        end
+      end
     end
   end
 
