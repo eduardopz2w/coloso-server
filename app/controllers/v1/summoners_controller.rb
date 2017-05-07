@@ -131,8 +131,8 @@ module V1
         return render(json: { :message => I18n.t('riot_limit_error') }, status: :service_unavailable)
       rescue EntityNotFoundError
         return render(json: { :message => I18n.t('summoner_not_in_game') }, status: :not_found)
-      #rescue Exception
-      #  return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
+      rescue Exception => e
+       return render(json: { :message => I18n.t('riot_server_error') }, status: :service_unavailable)
       end
     end
   end
