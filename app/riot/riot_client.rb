@@ -303,8 +303,11 @@ module RiotClient
   def self.fetchSummonerGameCurrent(sumId)
     region = URID.GetRegion(sumId)
     platform = regionToPlatform(region)
-    url = "https://#{regionToPlatform(region)}.api.riotgames.com/observer-mode/rest/consumer/getSpectatorGameInfo/#{platform}/#{URID.GetId(sumId)}"
+
+    url = "https://#{regionToPlatform(region)}.api.riotgames.com/lol/spectator/v3/active-games/by-summoner/#{URID.GetId(sumId)}"
     response = HTTP.get(url, :params => { :api_key => API_KEY})
+
+    puts url
 
     if response.code == 200
       jsonResponse = response.parse
