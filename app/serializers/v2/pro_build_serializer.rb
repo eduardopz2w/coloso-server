@@ -26,7 +26,7 @@ module V2
 
     def runes
       object.runes = object.runes.map { |rune|
-        rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
+        rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image', 'rune'))
       }
     end
 
