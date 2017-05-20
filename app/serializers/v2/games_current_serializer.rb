@@ -8,6 +8,7 @@ module V2
         participant['runes'] = participant['runes'].map { |rune|
           rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
         }
+        participant['champion'] = RiotStatic.champion(participant['championId'], I18n.locale).slice('name', 'title')
         participant
       }
     end
