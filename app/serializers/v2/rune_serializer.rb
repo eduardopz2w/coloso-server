@@ -6,7 +6,7 @@ module V2
     def pages
       object.pages = object.pages.map { |page|
         page['runes'] = page['runes'].map { |rune|
-          rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image'))
+          rune.merge(RiotStatic.rune(rune['runeId'], I18n.locale).slice('name', 'description', 'image', 'rune'))
         }
         page
       }
