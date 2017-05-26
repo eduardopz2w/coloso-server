@@ -12,6 +12,7 @@ module Coloso
     ActiveModelSerializers.config.key_transform = :camel_lower
     config.autoload_paths << "#{Rails.root}/app/errors"
     config.autoload_paths << "#{Rails.root}/app/riot"
+    config.assets.enabled = false
     config.middleware.use Rack::MethodOverride
     config.i18n.default_locale = 'en'
     config.androidMinApkVersion = ENV['COLOSO_MIN_APK_VERSION']
