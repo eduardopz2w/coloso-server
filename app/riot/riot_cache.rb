@@ -165,7 +165,7 @@ module RiotCache
     end
   end
 
-  def self.findSummonersLeagueEntries(sumIds, cacheMinutes = 30)
+  def self.findSummonersLeagueEntries(sumIds, cacheMinutes = 20)
     leagueEntries = LeagueEntry.where(:summonerId => sumIds)
 
     if leagueEntries.length != sumIds.length
@@ -199,7 +199,7 @@ module RiotCache
     return entries
   end
 
-  def self.findSummonerGamesRecent(sumId, cacheMinutes = 30)
+  def self.findSummonerGamesRecent(sumId, cacheMinutes = 20)
     games = GamesRecent.find_by(:summonerId => sumId)
 
     if games and self.isOutDated(games.updated_at, cacheMinutes)
