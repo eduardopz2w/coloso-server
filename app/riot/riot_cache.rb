@@ -5,18 +5,17 @@ module RiotCache
     if diffMin > cacheMinutes
       return true
     end
-
     return false
   end
 
   def self.findSummonerByName(sumName, region, cacheMinutes = 60)
-    summoner = Summoner.find_by(:name => sumName, :region => region)
-
-    if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
-      summoner = false
+    summoner = Summoner.where('lower(name) = ? and lower(region) = ?', sumName.downcase, region.downcase).first
+    
+    if summoner and !self.isOutDated(summoner.updated_at, cacheMinutes)
+      return summoner
     end
 
-    return summoner
+    return false
   end
 
   def self.saveSummonerByName(sumData)
@@ -35,11 +34,11 @@ module RiotCache
   def self.findSummonerById(sumId, cacheMinutes = 60)
     summoner = Summoner.find_by(:id => sumId)
 
-    if summoner and self.isOutDated(summoner.updated_at, cacheMinutes)
-      summoner = false
+    if summoner and !self.isOutDated(summoner.updated_at, cacheMinutes)
+      return summoner
     end
 
-    return summoner
+    return false
   end
 
   def self.saveSummonerById(sumData)
@@ -58,11 +57,11 @@ module RiotCache
   def self.findSummonerRunes(sumId, cacheMinutes = 60)
     runes = Rune.find_by(:summonerId => sumId)
 
-    if runes and self.isOutDated(runes.updated_at, cacheMinutes)
-      return false
+    if runes and !self.isOutDated(runes.updated_at, cacheMinutes)
+      return runes
     end
 
-    return runes
+    return false
   end
 
   def self.saveSummonerRunes(runesData)
@@ -80,11 +79,11 @@ module RiotCache
   def self.findSummonerMasteries(sumId, cacheMinutes = 60)
     masteries = Mastery.find_by(:summonerId => sumId)
 
-    if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
-      masteries = false
+    if masteries and !self.isOutDated(masteries.updated_at, cacheMinutes)
+      return masteries
     end
 
-    return masteries
+    return false
   end
 
   def self.saveSummonerMasteries(masteriesData)
@@ -102,11 +101,11 @@ module RiotCache
   def self.findSummonerChampionsMastery(sumId, cacheMinutes = 60)
     masteries = ChampionsMastery.find_by(:summonerId => sumId)
 
-    if masteries and self.isOutDated(masteries.updated_at, cacheMinutes)
-      return false
+    if masteries and !self.isOutDated(masteries.updated_at, cacheMinutes)
+      return masteries
     end
 
-    return masteries
+    return false
   end
 
   def self.saveSummonerChampionsMastery(masteriesData)
@@ -124,11 +123,11 @@ module RiotCache
   def self.findSummonerStatsSummary(sumId, season, cacheMinutes = 60)
     stats = StatsSummary.find_by(:summonerId => sumId, :season => season)
 
-    if stats and self.isOutDated(stats.updated_at, cacheMinutes)
-      stats = false
+    if stats and !self.isOutDated(stats.updated_at, cacheMinutes)
+      return stats
     end
 
-    return stats
+    return false
   end
 
   def self.saveSummonerStatsSummary(statsData)
@@ -146,11 +145,11 @@ module RiotCache
   def self.findSummonerStatsRanked(sumId, cacheMinutes = 60)
     stats = StatsRanked.find_by(:summonerId => sumId)
 
-    if stats and self.isOutDated(stats.updated_at, cacheMinutes)
-      stats = false
+    if stats and !self.isOutDated(stats.updated_at, cacheMinutes)
+      return stats
     end
 
-    return stats
+    return false
   end
 
   def self.saveSummonerStatsRanked(statsData)
@@ -202,11 +201,11 @@ module RiotCache
   def self.findSummonerGamesRecent(sumId, cacheMinutes = 20)
     games = GamesRecent.find_by(:summonerId => sumId)
 
-    if games and self.isOutDated(games.updated_at, cacheMinutes)
-      games = false
+    if games and !self.isOutDated(games.updated_at, cacheMinutes)
+      return games
     end
 
-    return games
+    return false
   end
 
   def self.saveSummonerGamesRecent(gamesData)
