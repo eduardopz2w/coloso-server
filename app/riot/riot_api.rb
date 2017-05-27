@@ -1,3 +1,5 @@
+require 'thread'
+require 'thwait'
 
 module RiotApi
   module Summoner
@@ -113,24 +115,53 @@ module RiotApi
         game = RiotClient.fetchSummonerGameCurrent(sumId)
 
         sumIds = []
-        statsRanked = []
+        sumIdsToFetch = []
+        rankedStats = []
+        rankedStatsThreads = []
 
         game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
 
         leagueEntries = RiotApi.summonersLeagueEntry(sumIds)
 
-        sumIds.each{ |id|
-          begin
-            sumStats = self.statsRanked(id)
-            statsRanked.push(sumStats)
-          rescue
-            # FetchError
+        #find rankeds stats in cache firest
+        sumIds.each { |participantSumId|
+          results = RiotCache.findSummonerStatsRanked(participantSumId)
+
+          if results != false
+            rankedStats.push(results)
+          else
+            sumIdsToFetch.push(participantSumId)
           end
         }
 
+        #fetch summoners not found in cache and store it
+        sumIdsToFetch.each { |participantSumId|
+          rankedStatsThreads << Thread.new do
+            begin
+              Thread.current[:results] = RiotClient.fetchSummonerStatsRanked(participantSumId)
+            rescue
+              Thread.current[:results] = nil
+            end
+          end
+        }
+
+        #wait for finish fetchs
+        ThreadsWait.all_waits(*rankedStatsThreads)
+
+        #store ranked stats found and push to final array
+        rankedStatsThreads.each { |rankedStatThread|
+          results = rankedStatThread[:results]
+
+          if results != nil
+            rankedStats.push(results)
+            RiotCache.saveSummonerStatsRanked(results)
+          end
+        }
+
+        #format output
         game[:participants].each do |participant|
           sumId = participant['summonerId']
-          participantRankedStats = statsRanked.find{ |stat|  stat[:summonerId] == sumId }
+          participantRankedStats = rankedStats.find{ |stat|  stat[:summonerId] == sumId }
 
           if participantRankedStats
             championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
