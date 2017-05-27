@@ -123,7 +123,7 @@ module RiotApi
 
         leagueEntries = RiotApi.summonersLeagueEntry(sumIds)
 
-        #find rankeds stats in cache firest
+        #find rankeds stats in cache first
         sumIds.each { |participantSumId|
           results = RiotCache.findSummonerStatsRanked(participantSumId)
 
@@ -134,13 +134,16 @@ module RiotApi
           end
         }
 
-        #fetch summoners not found in cache and store it
+        #fetch summoners not found in cache
         sumIdsToFetch.each { |participantSumId|
           rankedStatsThreads << Thread.new do
             begin
               Thread.current[:results] = RiotClient.fetchSummonerStatsRanked(participantSumId)
             rescue
-              Thread.current[:results] = nil
+              Thread.current[:results] = {
+                :summonerId => sumId,
+                :champions => [],
+              }
             end
           end
         }
@@ -151,11 +154,8 @@ module RiotApi
         #store ranked stats found and push to final array
         rankedStatsThreads.each { |rankedStatThread|
           results = rankedStatThread[:results]
-
-          if results != nil
-            rankedStats.push(results)
-            RiotCache.saveSummonerStatsRanked(results)
-          end
+          RiotCache.saveSummonerStatsRanked(results)
+          rankedStats.push(results)
         }
 
         #format output
