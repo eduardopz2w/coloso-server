@@ -111,67 +111,69 @@ module RiotApi
           end
       end
 
-      def self.gameCurrent(sumId)
+      def self.gameCurrent(sumId, fetchParticipantsData = true)
         game = RiotClient.fetchSummonerGameCurrent(sumId)
 
-        sumIds = []
-        sumIdsToFetch = []
-        rankedStats = []
-        rankedStatsThreads = []
+        if fetchParticipantsData
+          sumIds = []
+          sumIdsToFetch = []
+          rankedStats = []
+          rankedStatsThreads = []
 
-        game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
+          game[:participants].each { |participant| sumIds.push(participant['summonerId'])}
 
-        leagueEntries = RiotApi.summonersLeagueEntry(sumIds)
+          leagueEntries = RiotApi.summonersLeagueEntry(sumIds)
 
-        #find rankeds stats in cache first
-        sumIds.each { |participantSumId|
-          results = RiotCache.findSummonerStatsRanked(participantSumId)
+          #find rankeds stats in cache first
+          sumIds.each { |participantSumId|
+            results = RiotCache.findSummonerStatsRanked(participantSumId)
 
-          if results != false
+            if results != false
+              rankedStats.push(results)
+            else
+              sumIdsToFetch.push(participantSumId)
+            end
+          }
+
+          #fetch summoners not found in cache
+          sumIdsToFetch.each { |participantSumId|
+            rankedStatsThreads << Thread.new do
+              begin
+                Thread.current[:results] = RiotClient.fetchSummonerStatsRanked(participantSumId)
+              rescue
+                Thread.current[:results] = {
+                  :summonerId => sumId,
+                  :champions => [],
+                }
+              end
+            end
+          }
+
+          #wait for finish fetchs
+          ThreadsWait.all_waits(*rankedStatsThreads)
+
+          #store ranked stats found and push to final array
+          rankedStatsThreads.each { |rankedStatThread|
+            results = rankedStatThread[:results]
+            RiotCache.saveSummonerStatsRanked(results)
             rankedStats.push(results)
-          else
-            sumIdsToFetch.push(participantSumId)
-          end
-        }
+          }
 
-        #fetch summoners not found in cache
-        sumIdsToFetch.each { |participantSumId|
-          rankedStatsThreads << Thread.new do
-            begin
-              Thread.current[:results] = RiotClient.fetchSummonerStatsRanked(participantSumId)
-            rescue
-              Thread.current[:results] = {
-                :summonerId => sumId,
-                :champions => [],
-              }
+          #format output
+          game[:participants].each do |participant|
+            sumId = participant['summonerId']
+            participantRankedStats = rankedStats.find{ |stat|  stat[:summonerId] == sumId }
+
+            if participantRankedStats
+              championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
+
+              if championStats
+                participant['championRankedStats'] = championStats['stats']
+              end
             end
+
+            participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
           end
-        }
-
-        #wait for finish fetchs
-        ThreadsWait.all_waits(*rankedStatsThreads)
-
-        #store ranked stats found and push to final array
-        rankedStatsThreads.each { |rankedStatThread|
-          results = rankedStatThread[:results]
-          RiotCache.saveSummonerStatsRanked(results)
-          rankedStats.push(results)
-        }
-
-        #format output
-        game[:participants].each do |participant|
-          sumId = participant['summonerId']
-          participantRankedStats = rankedStats.find{ |stat|  stat[:summonerId] == sumId }
-
-          if participantRankedStats
-            championStats = participantRankedStats[:champions].find{ |champion| champion['id'] == participant['championId'] }
-
-            if championStats
-              participant['championRankedStats'] = championStats['stats']
-            end
-          end
-
-          participant['leagueEntry'] = leagueEntries.find{ |leagueEntry| leagueEntry['summonerId'] == sumId }
         end
 
         return GameCurrent.new(game)
