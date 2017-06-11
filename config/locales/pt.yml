@@ -1,0 +1,9 @@
+pt:
+  summoner_not_found: 'Summoner not found'
+  runes_not_found: 'Runes not found'
+  games_not_found: 'Games not found'
+  riot_limit_error: 'Riot server error, try again later'
+  riot_server_error: 'Riot server error, try again later'
+  summoner_not_in_game: 'The summoner is not in a game currently'
+  build_not_found: 'Build not found'
+  update_request: 'You need to update your app'
