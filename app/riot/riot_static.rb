@@ -9,6 +9,11 @@ module RiotStatic
       'rune' => JSON.parse(File.read("app/assets/riot_static/es/rune.json")),
       'champion' => JSON.parse(File.read("app/assets/riot_static/es/champion.json")),
       'item' => JSON.parse(File.read("app/assets/riot_static/es/item.json")),
+    },
+    'pt' => {
+      'rune' => JSON.parse(File.read("app/assets/riot_static/pt/rune.json")),
+      'champion' => JSON.parse(File.read("app/assets/riot_static/pt/champion.json")),
+      'item' => JSON.parse(File.read("app/assets/riot_static/pt/item.json")),
     }
   }
 
