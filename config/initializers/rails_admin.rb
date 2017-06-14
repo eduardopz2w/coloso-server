@@ -61,7 +61,7 @@ RailsAdmin.config do |config|
     end
 
     edit do
-      include_fields :name, :realName, :role, :pro_summoners
+      include_fields :name, :realName, :role, :imageUrl, :pro_summoners
     end
   end
 
